@@ -1,0 +1,40 @@
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
+  roots: ['<rootDir>'],
+  testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
+  testPathIgnorePatterns: ['<rootDir>/e2e/'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  collectCoverageFrom: [
+    '**/*.{ts,tsx}',
+    '!**/*.d.ts',
+    '!**/node_modules/**',
+    '!**/.expo/**',
+    '!**/playwright.config.ts',
+    '!**/dist/**',
+    '!**/e2e/**',
+    '!**/ARCHITECTURE.ts',
+    '!**/entities/**',
+    '!**/dto/**',
+    '!**/repositories/I*.ts',
+  ],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^react-native$': '<rootDir>/__mocks__/react-native.js',
+    '^expo-status-bar$': '<rootDir>/__mocks__/expo-status-bar.js',
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^react$': '<rootDir>/node_modules/react',
+    '^react-dom$': '<rootDir>/node_modules/react-dom',
+    '^react-dom/client$': '<rootDir>/node_modules/react-dom/cjs/react-dom-client.development.js',
+  },
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: {
+        jsx: 'react-jsx',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+      },
+    }],
+  },
+};
