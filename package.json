@@ -17,6 +17,7 @@
     "lint:typescript:console": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@babel/preset-flow": "^7.27.1",
     "expo": "~54.0.32",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
