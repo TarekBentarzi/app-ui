@@ -5,5 +5,15 @@ module.exports = function (api) {
       'babel-preset-expo',
       '@babel/preset-flow'
     ],
+    plugins: [
+      [
+        'module-resolver',
+        {
+          alias: {
+            '@': './src',
+          },
+        },
+      ],
+    ],
   };
 };

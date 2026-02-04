@@ -93,4 +93,63 @@ describe('apiClient', () => {
       );
     });
   });
+
+  describe('patch', () => {
+    it('should make a PATCH request with data', async () => {
+      const mockData = { id: '1', name: 'Updated name' };
+      const patchData = { name: 'Updated name' };
+
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockData,
+      });
+
+      const result = await apiClient.patch('/users/1', patchData);
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/users/1'),
+        expect.objectContaining({
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patchData),
+        })
+      );
+      expect(result).toEqual(mockData);
+    });
+
+    it('should throw error when PATCH response is not ok', async () => {
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      await expect(apiClient.patch('/users/1', {})).rejects.toThrow('API Error: 500');
+    });
+  });
+
+  describe('delete', () => {
+    it('should make a DELETE request', async () => {
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+      });
+
+      await apiClient.delete('/users/1');
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/users/1'),
+        expect.objectContaining({
+          method: 'DELETE',
+        })
+      );
+    });
+
+    it('should throw error when DELETE response is not ok', async () => {
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+      });
+
+      await expect(apiClient.delete('/users/1')).rejects.toThrow('API Error: 403');
+    });
+  });
 });

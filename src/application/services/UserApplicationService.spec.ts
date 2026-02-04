@@ -80,4 +80,32 @@ describe('UserApplicationService', () => {
       expect(result[0]).not.toHaveProperty('createdAt');
     });
   });
+
+  describe('register', () => {
+    it('should register a user and return a DTO', async () => {
+      const input = { name: 'John', email: 'john@example.com' };
+      const mockUser: User = {
+        id: '1',
+        ...input,
+        createdAt: new Date(),
+      };
+
+      mockRepository.create.mockResolvedValue(mockUser);
+
+      const result = await service.register(input);
+
+      expect(mockRepository.create).toHaveBeenCalledWith(input);
+      expect(result).toEqual({
+        id: '1',
+        name: 'John',
+        email: 'john@example.com',
+      });
+    });
+
+    it('should propagate errors from register use case', async () => {
+      mockRepository.create.mockRejectedValue(new Error('Registration failed'));
+
+      await expect(service.register({ name: 'a', email: 'b' })).rejects.toThrow('Registration failed');
+    });
+  });
 });

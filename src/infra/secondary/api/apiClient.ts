@@ -21,4 +21,21 @@ export const apiClient = {
     if (!response.ok) throw new Error(`API Error: ${response.status}`);
     return response.json();
   },
+
+  patch: async (endpoint: string, data: any) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+    return response.json();
+  },
+
+  delete: async (endpoint: string) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+  },
 };

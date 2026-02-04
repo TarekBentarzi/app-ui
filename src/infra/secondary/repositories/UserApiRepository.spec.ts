@@ -27,7 +27,7 @@ describe('UserApiRepository', () => {
 
       const result = await repository.findAll();
 
-      expect(mockApiClient.get).toHaveBeenCalledWith('/users');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/user');
       expect(result).toEqual(mockUsers);
     });
 
@@ -50,7 +50,7 @@ describe('UserApiRepository', () => {
 
       const result = await repository.findById('1');
 
-      expect(mockApiClient.get).toHaveBeenCalledWith('/users/1');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/user/1');
       expect(result).toEqual(mockUser);
     });
 
@@ -83,7 +83,7 @@ describe('UserApiRepository', () => {
 
       const result = await repository.create(input);
 
-      expect(mockApiClient.post).toHaveBeenCalledWith('/users', input);
+      expect(mockApiClient.post).toHaveBeenCalledWith('/user', input);
       expect(result).toEqual(mockUser);
     });
 
@@ -105,26 +105,26 @@ describe('UserApiRepository', () => {
         email: 'alice@example.com',
         createdAt: new Date(),
       };
-      mockApiClient.post.mockResolvedValue(mockUser);
+      mockApiClient.patch.mockResolvedValue(mockUser);
 
       const result = await repository.update('1', updates);
 
-      expect(mockApiClient.post).toHaveBeenCalledWith('/users/1', updates);
+      expect(mockApiClient.patch).toHaveBeenCalledWith('/user/1', updates);
       expect(result).toEqual(mockUser);
     });
   });
 
   describe('delete', () => {
     it('should delete user', async () => {
-      mockApiClient.get.mockResolvedValue(undefined);
+      mockApiClient.delete.mockResolvedValue(undefined);
 
       await repository.delete('1');
 
-      expect(mockApiClient.get).toHaveBeenCalledWith('/users/1');
+      expect(mockApiClient.delete).toHaveBeenCalledWith('/user/1');
     });
 
     it('should propagate errors on delete', async () => {
-      mockApiClient.get.mockRejectedValue(new Error('Delete failed'));
+      mockApiClient.delete.mockRejectedValue(new Error('Delete failed'));
 
       await expect(repository.delete('1')).rejects.toThrow('Delete failed');
     });
