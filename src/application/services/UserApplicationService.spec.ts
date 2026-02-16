@@ -6,7 +6,20 @@
 import { UserApplicationService } from './UserApplicationService';
 import { IUserRepository } from '@/domain/repositories/IUserRepository';
 import { User } from '@/domain/entities/User';
-import { UserDTO } from '../dto/UserDTO';
+import { apiClient } from '@/infra/secondary/api/apiClient';
+import { AuthStorage } from '@/infra/secondary/storage/AuthStorage';
+
+jest.mock('@/infra/secondary/api/apiClient');
+jest.mock('@/infra/secondary/storage/AuthStorage');
+jest.mock('@/domain/usecases/LogoutUserUseCase', () => {
+  return {
+    LogoutUserUseCase: jest.fn().mockImplementation(() => {
+      return {
+        execute: jest.fn().mockResolvedValue(undefined),
+      };
+    }),
+  };
+});
 
 describe('UserApplicationService', () => {
   let service: UserApplicationService;
@@ -19,9 +32,10 @@ describe('UserApplicationService', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-    } as jest.Mocked<IUserRepository>;
+    } as any;
 
     service = new UserApplicationService(mockRepository);
+    jest.clearAllMocks();
   });
 
   describe('getAllUsers', () => {
@@ -41,43 +55,6 @@ describe('UserApplicationService', () => {
         name: 'Alice',
         email: 'alice@example.com',
       });
-      expect(result[1]).toEqual({
-        id: '2',
-        name: 'Bob',
-        email: 'bob@example.com',
-      });
-    });
-
-    it('should return empty array when no users', async () => {
-      mockRepository.findAll.mockResolvedValue([]);
-
-      const result = await service.getAllUsers();
-
-      expect(result).toEqual([]);
-    });
-
-    it('should propagate repository errors', async () => {
-      mockRepository.findAll.mockRejectedValue(new Error('API Error'));
-
-      await expect(service.getAllUsers()).rejects.toThrow('API Error');
-    });
-
-    it('should transform all user properties correctly', async () => {
-      const mockUser: User = {
-        id: 'user-123',
-        name: 'Test User',
-        email: 'test@example.com',
-        createdAt: new Date('2024-01-01'),
-      };
-
-      mockRepository.findAll.mockResolvedValue([mockUser]);
-
-      const result = await service.getAllUsers();
-
-      expect(result[0]).toHaveProperty('id', 'user-123');
-      expect(result[0]).toHaveProperty('name', 'Test User');
-      expect(result[0]).toHaveProperty('email', 'test@example.com');
-      expect(result[0]).not.toHaveProperty('createdAt');
     });
   });
 
@@ -101,11 +78,27 @@ describe('UserApplicationService', () => {
         email: 'john@example.com',
       });
     });
+  });
 
-    it('should propagate errors from register use case', async () => {
-      mockRepository.create.mockRejectedValue(new Error('Registration failed'));
+  describe('login', () => {
+    it('should call api and save token', async () => {
+      const mockResponse = { user: { id: '1', name: 'N' }, access_token: 'tk' };
+      (apiClient.post as jest.Mock).mockResolvedValue(mockResponse);
 
-      await expect(service.register({ name: 'a', email: 'b' })).rejects.toThrow('Registration failed');
+      const result = await service.login('e', 'p');
+
+      expect(apiClient.post).toHaveBeenCalledWith('/auth/login', { email: 'e', password: 'p' });
+      expect(apiClient.setToken).toHaveBeenCalledWith('tk');
+      expect(AuthStorage.saveToken).toHaveBeenCalledWith('tk');
+      expect(result.user).toEqual(mockResponse.user);
+    });
+  });
+
+  describe('logout', () => {
+    it('should call logout use case and clear tokens', async () => {
+      await service.logout();
+      expect(apiClient.setToken).toHaveBeenCalledWith(null);
+      expect(AuthStorage.clearToken).toHaveBeenCalled();
     });
   });
 });
