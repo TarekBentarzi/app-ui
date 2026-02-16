@@ -81,10 +81,10 @@ jest.mock('react-native', () => {
     ...RN,
     Platform: { ...RN.Platform, OS: 'ios', select: (obj) => obj.ios },
     NativeModules: { ...RN.NativeModules },
-    ScrollView: ({ children }: any) => children,
+    ScrollView: ({ children }) => children,
     StyleSheet: {
       ...RN.StyleSheet,
-      flatten: (style: any) => style || {},
+      flatten: (style) => style || {},
     },
     Touchable: {
       Mixin: {},
