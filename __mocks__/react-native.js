@@ -7,6 +7,8 @@ module.exports = {
     React.createElement('span', { ...props, style }, children),
   SafeAreaView: ({ children, style, ...props }) =>
     React.createElement('div', { ...props, style }, children),
+  ScrollView: ({ children, style, ...props }) =>
+    React.createElement('div', { ...props, style }, children),
   TextInput: ({ onChangeText, style, ...props }) =>
     React.createElement('input', {
       ...props,
@@ -17,7 +19,15 @@ module.exports = {
     React.createElement('button', { ...props, style, onClick: onPress }, children),
   ActivityIndicator: () =>
     React.createElement('div', { 'data-testid': 'activity-indicator' }),
+  Alert: {
+    alert: jest.fn(),
+  },
   StyleSheet: {
     create: (styles) => styles,
+    flatten: (style) => style || {},
+  },
+  Platform: {
+    OS: 'ios',
+    select: (obj) => obj.ios || obj.default,
   },
 };

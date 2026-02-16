@@ -1,0 +1,114 @@
+{
+    "auth": {
+        "welcome": "Bon retour",
+        "create_account": "Créer un compte",
+        "login_subtitle": "Connectez-vous pour continuer votre parcours",
+        "register_subtitle": "Commencez votre parcours coranique personnalisé",
+        "login_button": "Se connecter",
+        "register_button": "Créer un compte",
+        "full_name": "Nom complet",
+        "email": "Adresse e-mail",
+        "password": "Mot de passe",
+        "switch_to_signup": "Vous n'avez pas de compte ? S'inscrire",
+        "switch_to_login": "Vous avez déjà un compte ? Se connecter",
+        "fill_fields": "Veuillez remplir tous les champs",
+        "auth_failed": "Échec de l'authentification",
+        "login_success": "Bon retour parmi nous !",
+        "register_success": "Compte créé avec succès !",
+        "social_continue": "Ou continuer avec",
+        "google": "Google",
+        "facebook": "Facebook"
+    },
+    "common": {
+        "error": "Erreur",
+        "success": "Succès",
+        "loading": "Chargement...",
+        "confirm": "Confirmer",
+        "cancel": "Annuler",
+        "reset": "Réinitialiser",
+        "nuke": "NITRO",
+        "next": "Suivant",
+        "previous": "Précédent",
+        "show": "Afficher",
+        "hide": "Masquer"
+    },
+    "welcome": {
+        "title": "Parcours Coranique",
+        "subtitle": "Apprendre, Mémoriser, Perfectionner",
+        "get_started": "Commencer",
+        "footer": "Rejoignez des milliers de personnes apprenant le Coran",
+        "features": {
+            "read": {
+                "title": "Lire & Apprendre",
+                "description": "Suivez votre chemin personnalisé"
+            },
+            "memorize": {
+                "title": "Mémoriser & Progresser",
+                "description": "Suivez vos progrès et évitez les erreurs"
+            },
+            "pronunciation": {
+                "title": "Prononciation Parfaite",
+                "description": "Maîtrisez les règles du Tajweed"
+            }
+        }
+    },
+    "menu": {
+        "title": "Parcours Coranique",
+        "greeting": "As-salamu alaykum, {{name}} !",
+        "welcome_back": "Bon retour",
+        "streak": "Série actuelle",
+        "days": "Jours",
+        "keep_it_up": "Continuez comme ça !",
+        "unlock_all": "Connectez-vous pour tout débloquer",
+        "unlock_description": "Sauvegardez votre progression, participez et recevez des rappels",
+        "signin_signup": "Se Connecter / S'inscrire",
+        "your_progress": "Votre Progression",
+        "current_position": "Position actuelle",
+        "surah": "Sourate",
+        "verse": "Verset",
+        "verses_read": "Versets lus",
+        "verses_memorized": "Versets mémorisés",
+        "choose_practice": "Choisissez votre pratique",
+        "practice_reading": {
+            "title": "Lecture",
+            "subtitle": "Lire et comprendre les versets",
+            "progress": "{{count}}/{{total}} versets"
+        },
+        "practice_memorizing": {
+            "title": "Mémorisation",
+            "subtitle_locked": "Connectez-vous pour débloquer",
+            "subtitle_unlocked": "Jeux de mémorisation interactifs"
+        },
+        "practice_pronunciation": {
+            "title": "Prononciation (Tajweed)",
+            "subtitle_locked": "Connectez-vous pour débloquer",
+            "subtitle_unlocked": "Pratiquez la prononciation correcte"
+        }
+    },
+    "reading": {
+        "title": "Lecture",
+        "surah_title": "Sourate {{number}} : {{name}}",
+        "your_progress": "Votre progression",
+        "transliteration": "Translittération",
+        "translation": "Traduction",
+        "mark_as_read": "Marquer comme lu & Continuer",
+        "signin_prompt": "Connectez-vous pour sauvegarder votre progression"
+    },
+    "profile": {
+        "title": "Profil",
+        "guest": "Invité",
+        "signin_to_sync": "Connectez-vous pour synchroniser",
+        "account_settings": "Paramètres du compte",
+        "preferences": "Préférences",
+        "notifications": "Notifications",
+        "privacy": "Confidentialité & Sécurité",
+        "danger_zone": "Zone de danger",
+        "reset_progress": "Réinitialiser toute la progression",
+        "sign_out": "Se déconnecter",
+        "sign_out_confirm": "Voulez-vous vraiment vous déconnecter ? Votre progression locale sera conservée.",
+        "reset_confirm": "Cela effacera toute votre progression. Cette action est irréversible.",
+        "nuclear_reset": "Réinitialisation Nucléaire",
+        "nuclear_confirm": "Cela effacera TOUT, y compris les sessions. Continuer ?",
+        "version": "QLearn Version {{version}}"
+    }
+}

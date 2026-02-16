@@ -104,7 +104,9 @@ describe('useUsers', () => {
     });
 
     // Call refetch
-    await result.current.refetch();
+    await waitFor(async () => {
+      await result.current.refetch();
+    });
 
     expect(mockUserService.getAllUsers).toHaveBeenCalledTimes(2);
   });
@@ -119,7 +121,9 @@ describe('useUsers', () => {
     });
 
     mockUserService.getAllUsers.mockResolvedValueOnce([]);
-    await result.current.refetch();
+    await waitFor(async () => {
+      await result.current.refetch();
+    });
 
     await waitFor(() => {
       expect(result.current.error).toBeNull();
