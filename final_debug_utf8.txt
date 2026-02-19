@@ -1,0 +1,215 @@
+﻿node.exe : FAIL src/in
+fra/secondary/storage/
+AuthStorage.spec.ts
+Au caractère 
+C:\Program Files\nodej
+s\npx.ps1:29 : 3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (FAIL src/i   
+ nfra/...Storage.s    
+pec.ts:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  AuthStorage
+    ÔêÜ should save 
+user to localStorage 
+(11 ms)
+    ÔêÜ should get 
+user from 
+localStorage (3 ms)
+    ÔêÜ should return 
+null if no user in 
+localStorage (2 ms)
+    ÔêÜ should clear 
+user from 
+localStorage (1 ms)
+    ├ù should handle 
+environment without 
+window gracefully (2 
+ms)
+
+  ÔùÅ AuthStorage ÔÇ║ 
+should handle 
+environment without 
+window gracefully
+
+    expect(received).t
+oBeNull()
+
+    Received: 
+{"email": 
+"test@example.com", 
+"id": "1", "name": 
+"Test"}
+
+    [0m [90m 46 
+|[39m             
+[90m// Should not 
+throw and do 
+nothing[39m
+     [90m 47 |[39m  
+           [33mAuthSt
+orage[39m[33m.[39ms
+aveUser(mockUser)[33m
+;[39m
+    [31m[1m>[22m[3
+9m[90m 48 |[39m     
+        expect([33mAu
+thStorage[39m[33m.[
+39mgetUser())[33m.[3
+9mtoBeNull()[33m;[39
+m
+     [90m    |[39m  
+                      
+                   
+[31m[1m^[22m[39m
+     [90m 49 |[39m  
+           [33mAuthSt
+orage[39m[33m.[39mc
+learUser()[33m;[39m
+     [90m 50 |[39m  
+       })[33m;[39m
+     [90m 51 
+|[39m[0m
+
+      at src/infra/sec
+ondary/storage/AuthSto
+rage.spec.ts:48:43
+      at 
+Object.<anonymous> (sr
+c/infra/secondary/stor
+age/AuthStorage.spec.t
+s:43:14)
+
+FAIL ./App.spec.tsx
+  App Component
+    ÔêÜ should render 
+the welcome screen 
+initially (52 ms)
+    ÔêÜ should 
+display user name 
+when logged in (7 ms)
+    ÔêÜ should toggle 
+registration form 
+visibility (14 ms)
+    ÔêÜ should handle 
+successful 
+registration (12 ms)
+    ÔêÜ should call 
+signOut when header 
+triggers it (6 ms)
+    ├ù should handle 
+registration error (7 
+ms)
+
+  ÔùÅ App Component 
+ÔÇ║ should handle 
+registration error
+
+    Handle Error
+
+    [0m [90m 91 
+|[39m
+     [90m 92 |[39m  
+ it([32m'should 
+handle registration er
+ror'[39m[33m,[39m 
+[36masync[39m () 
+[33m=>[39m {
+    [31m[1m>[22m[3
+9m[90m 93 |[39m     
+[36mconst[39m error 
+[33m=[39m 
+[36mnew[39m [33mErr
+or[39m([32m'Handle E
+rror'[39m)[33m;[39m
+     [90m    |[39m  
+                 
+[31m[1m^[22m[39m
+     [90m 94 |[39m  
+   mockAuth[33m.[39m
+signIn[33m.[39mmockR
+ejectedValueOnce(error
+)[33m;[39m
+     [90m 95 |[39m  
+   [36mconst[39m 
+consoleSpy 
+[33m=[39m jest[33m.
+[39mspyOn(console[33
+m,[39m [32m'error'[
+39m)[33m.[39mmockImp
+lementation(() 
+[33m=>[39m { 
+})[33m;[39m
+     [90m 96 
+|[39m[0m
+
+      at 
+Object.<anonymous> 
+(App.spec.tsx:93:19)
+
+  ÔùÅ App Component 
+ÔÇ║ should handle 
+registration error
+
+    Handle Error
+
+    [0m [90m 91 
+|[39m
+     [90m 92 |[39m  
+ it([32m'should 
+handle registration er
+ror'[39m[33m,[39m 
+[36masync[39m () 
+[33m=>[39m {
+    [31m[1m>[22m[3
+9m[90m 93 |[39m     
+[36mconst[39m error 
+[33m=[39m 
+[36mnew[39m [33mErr
+or[39m([32m'Handle E
+rror'[39m)[33m;[39m
+     [90m    |[39m  
+                 
+[31m[1m^[22m[39m
+     [90m 94 |[39m  
+   mockAuth[33m.[39m
+signIn[33m.[39mmockR
+ejectedValueOnce(error
+)[33m;[39m
+     [90m 95 |[39m  
+   [36mconst[39m 
+consoleSpy 
+[33m=[39m jest[33m.
+[39mspyOn(console[33
+m,[39m [32m'error'[
+39m)[33m.[39mmockImp
+lementation(() 
+[33m=>[39m { 
+})[33m;[39m
+     [90m 96 
+|[39m[0m
+
+      at 
+Object.<anonymous> 
+(App.spec.tsx:93:19)
+
+Test Suites: 2 
+failed, 2 total
+Tests:       2 
+failed, 9 passed, 11 
+total
+Snapshots:   0 total
+Time:        6.041 s, 
+estimated 10 s
+Ran all test suites 
+matching App.spec.tsx|
+AuthStorage.spec.ts.

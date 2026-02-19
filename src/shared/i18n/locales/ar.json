@@ -1,0 +1,114 @@
+{
+    "auth": {
+        "welcome": "مرحباً بك مجدداً",
+        "create_account": "إنشاء حساب",
+        "login_subtitle": "سجل الدخول لمواصلة رحلتك",
+        "register_subtitle": "ابدأ رحلتك القرآنية المخصصة",
+        "login_button": "تسجيل الدخول",
+        "register_button": "إنشاء حساب",
+        "full_name": "الاسم الكامل",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "switch_to_signup": "ليس لديك حساب؟ سجل الآن",
+        "switch_to_login": "لديك حساب بالفعل؟ سجل الدخول",
+        "fill_fields": "يرجى ملء جميع الحقول",
+        "auth_failed": "فشل المصادقة",
+        "login_success": "مرحباً بك مجدداً!",
+        "register_success": "تم إنشاء الحساب بنجاح!",
+        "social_continue": "أو المتابعة باستخدام",
+        "google": "جوجل",
+        "facebook": "فيسبوك"
+    },
+    "common": {
+        "error": "خطأ",
+        "success": "نجاح",
+        "loading": "جاري التحميل...",
+        "confirm": "تأكيد",
+        "cancel": "إلغاء",
+        "reset": "إعادة ضبط",
+        "nuke": "مسح شامل",
+        "next": "التالي",
+        "previous": "السابق",
+        "show": "إظهار",
+        "hide": "إخفاء"
+    },
+    "welcome": {
+        "title": "رحلة القرآن",
+        "subtitle": "تعلم، احفظ، أتقن",
+        "get_started": "ابدأ الآن",
+        "footer": "انضم إلى الآلاف الذين يتعلمون القرآن يومياً",
+        "features": {
+            "read": {
+                "title": "اقرأ وتعلّم",
+                "description": "اتبع مسارك الشخصي"
+            },
+            "memorize": {
+                "title": "احفظ وتنافس",
+                "description": "تتبع تقدمك وتنافس مع الآخرين"
+            },
+            "pronunciation": {
+                "title": "إتقان النطق",
+                "description": "أتقن قواعد التجويد"
+            }
+        }
+    },
+    "menu": {
+        "title": "رحلة القرآن",
+        "greeting": "السلام عليكم، {{name}}!",
+        "welcome_back": "مرحباً بك",
+        "streak": "التتابُع الحالي",
+        "days": "أيام",
+        "keep_it_up": "استمر في ذلك!",
+        "unlock_all": "سجل الدخول لفتح جميع الميزات",
+        "unlock_description": "احفظ تقدمك، وتنافس مع الآخرين، واحصل على تذكيرات مخصصة",
+        "signin_signup": "تسجيل الدخول / الاشتراك",
+        "your_progress": "تقدمك",
+        "current_position": "الموقع الحالي",
+        "surah": "سورة",
+        "verse": "آية",
+        "verses_read": "آيات مقروءة",
+        "verses_memorized": "آيات محفوظة",
+        "choose_practice": "اختر ممارستك",
+        "practice_reading": {
+            "title": "القراءة",
+            "subtitle": "اقرأ وافهم الآيات",
+            "progress": "{{count}}/{{total}} آية"
+        },
+        "practice_memorizing": {
+            "title": "الحفظ",
+            "subtitle_locked": "سجل الدخول للفتح",
+            "subtitle_unlocked": "ألعاب حفظ تفاعلية"
+        },
+        "practice_pronunciation": {
+            "title": "النطق (التجويد)",
+            "subtitle_locked": "سجل الدخول للفتح",
+            "subtitle_unlocked": "تدرب على النطق الصحيح"
+        }
+    },
+    "reading": {
+        "title": "القراءة",
+        "surah_title": "سورة {{number}}: {{name}}",
+        "your_progress": "تقدمك",
+        "transliteration": "النقحرة",
+        "translation": "الترجمة",
+        "mark_as_read": "تحديد كمقروء والمتابعة",
+        "signin_prompt": "سجل الدخول لحفظ تقدمك في القراءة وفتح المزيد من الميزات"
+    },
+    "profile": {
+        "title": "الملف الشخصي",
+        "guest": "مستخدم زائر",
+        "signin_to_sync": "سجل الدخول لمزامنة تقدمك",
+        "account_settings": "إعدادات الحساب",
+        "preferences": "تفضيلات الحساب",
+        "notifications": "الإشعارات",
+        "privacy": "الخصوصية والأمان",
+        "danger_zone": "منطقة خطر",
+        "reset_progress": "إعادة ضبط كل التقدم",
+        "sign_out": "تسجيل الخروج",
+        "sign_out_confirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟ سيتم الحفاظ على تقدمك المحلي.",
+        "reset_confirm": "سيؤدي هذا إلى مسح كل تقدمك في التعلم. لا يمكن التراجع عن هذا الإجراء.",
+        "nuclear_reset": "إعادة ضبط شاملة",
+        "nuclear_confirm": "سيؤدي هذا إلى مسح كل شيء بما في ذلك الجلسات. هل تريد الاستمرار؟",
+        "version": "QLearn إصدار {{version}}"
+    }
+}

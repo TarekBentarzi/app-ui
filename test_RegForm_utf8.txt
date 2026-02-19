@@ -1,0 +1,1022 @@
+﻿  console.error
+    Unknown event handler property `onChangeText`. It will be ignored.
+
+    [0m [90m 13 |[39m
+     [90m 14 |[39m     it([32m'should render the form'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 15 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 16 |[39m
+     [90m 17 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 18 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m[0m
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2943:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:15:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 13 |[39m
+     [90m 14 |[39m     it([32m'should render the form'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 15 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 16 |[39m
+     [90m 17 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 18 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:15:15)
+
+  console.error
+    React does not recognize the `keyboardType` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `keyboardtype` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+
+    [0m [90m 13 |[39m
+     [90m 14 |[39m     it([32m'should render the form'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 15 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 16 |[39m
+     [90m 17 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 18 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m[0m
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3009:19)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:15:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 13 |[39m
+     [90m 14 |[39m     it([32m'should render the form'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 15 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 16 |[39m
+     [90m 17 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 18 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:15:15)
+
+  console.error
+    Unknown event handler property `onPress`. It will be ignored.
+
+    [0m [90m 13 |[39m
+     [90m 14 |[39m     it([32m'should render the form'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 15 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 16 |[39m
+     [90m 17 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 18 |[39m         expect(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m[0m
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:2943:21)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:15:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 21 |[39m
+     [90m 22 |[39m     it([32m'should show error if name or email is missing on submit'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 23 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 24 |[39m
+     [90m 25 |[39m         fireEvent[33m.[39mclick(screen[33m.[39mgetByText([32m'Confirm Registration'[39m))[33m;[39m
+     [90m 26 |[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:23:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 21 |[39m
+     [90m 22 |[39m     it([32m'should show error if name or email is missing on submit'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 23 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 24 |[39m
+     [90m 25 |[39m         fireEvent[33m.[39mclick(screen[33m.[39mgetByText([32m'Confirm Registration'[39m))[33m;[39m
+     [90m 26 |[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:23:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 31 |[39m     it([32m'should call onRegister with valid data'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m 32 |[39m         onRegister[33m.[39mmockResolvedValueOnce(undefined)[33m;[39m
+    [31m[1m>[22m[39m[90m 33 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 34 |[39m
+     [90m 35 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'John Doe'[39m } })[33m;[39m
+     [90m 36 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'john@example.com'[39m } })[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:33:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 31 |[39m     it([32m'should call onRegister with valid data'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m 32 |[39m         onRegister[33m.[39mmockResolvedValueOnce(undefined)[33m;[39m
+    [31m[1m>[22m[39m[90m 33 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 34 |[39m
+     [90m 35 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'John Doe'[39m } })[33m;[39m
+     [90m 36 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'john@example.com'[39m } })[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:33:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 45 |[39m     it([32m'should show error message if registration fails'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m 46 |[39m         onRegister[33m.[39mmockRejectedValueOnce([36mnew[39m [33mError[39m([32m'Server Error'[39m))[33m;[39m
+    [31m[1m>[22m[39m[90m 47 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 48 |[39m
+     [90m 49 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'John'[39m } })[33m;[39m
+     [90m 50 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'j@e.c'[39m } })[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:47:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 45 |[39m     it([32m'should show error message if registration fails'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m 46 |[39m         onRegister[33m.[39mmockRejectedValueOnce([36mnew[39m [33mError[39m([32m'Server Error'[39m))[33m;[39m
+    [31m[1m>[22m[39m[90m 47 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 48 |[39m
+     [90m 49 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Full Name'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'John'[39m } })[33m;[39m
+     [90m 50 |[39m         fireEvent[33m.[39mchange(screen[33m.[39mgetByPlaceholderText([32m'Email Address'[39m)[33m,[39m { target[33m:[39m { value[33m:[39m [32m'j@e.c'[39m } })[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:47:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 58 |[39m
+     [90m 59 |[39m     it([32m'should call onCancel when clicking cancel'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 60 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 61 |[39m
+     [90m 62 |[39m         fireEvent[33m.[39mclick(screen[33m.[39mgetByText([32m'Cancel'[39m))[33m;[39m
+     [90m 63 |[39m         expect(onCancel)[33m.[39mtoHaveBeenCalled()[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:60:15)
+
+  console.error
+    You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+    [0m [90m 58 |[39m
+     [90m 59 |[39m     it([32m'should call onCancel when clicking cancel'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 60 |[39m         render([33m<[39m[33mRegistrationForm[39m onRegister[33m=[39m{onRegister} onCancel[33m=[39m{onCancel} [33m/[39m[33m>[39m)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 61 |[39m
+     [90m 62 |[39m         fireEvent[33m.[39mclick(screen[33m.[39mgetByText([32m'Cancel'[39m))[33m;[39m
+     [90m 63 |[39m         expect(onCancel)[33m.[39mtoHaveBeenCalled()[33m;[39m[0m
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1060:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17784:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at ../node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (../node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (../node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/infra/primary/components/RegistrationForm.spec.tsx:60:15)
+
+node.exe : FAIL src/in
+fra/primary/components
+/RegistrationForm.spec
+.tsx
+Au caractère 
+C:\Program Files\nodej
+s\npx.ps1:29 : 3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (FAIL src/i   
+ nfra/...onForm.sp    
+ec.tsx:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  RegistrationForm 
+component
+    ÔêÜ should render 
+the form (98 ms)
+    ├ù should show 
+error if name or 
+email is missing on 
+submit (20 ms)
+    ├ù should call 
+onRegister with valid 
+data (1018 ms)
+    ├ù should show 
+error message if 
+registration fails 
+(1019 ms)
+    ├ù should call 
+onCancel when 
+clicking cancel (14 
+ms)
+
+  ÔùÅ 
+RegistrationForm 
+component ÔÇ║ should 
+show error if name or 
+email is missing on 
+submit
+
+    TestingLibraryElem
+entError: Unable to 
+find an element with 
+the text: Name and 
+Email are required. 
+This could be because 
+the text is broken up 
+by multiple elements. 
+In this case, you can 
+provide a function 
+for your text matcher 
+to make your matcher 
+more flexible.
+
+    Ignored nodes: 
+comments, script, 
+style
+    [36m<body>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mstyle[
+39m=[32m"background-c
+olor: rgb(255, 255, 
+255); border-radius: 
+12px; padding: 24px; 
+width: 90%; 
+max-width: 400px; 
+elevation: 5px;"[39m
+        [36m>[39m
+          
+[36m<span[39m
+            [33mstyle
+[39m=[32m"font-size:
+ 20px; font-weight: 
+bold; margin-bottom: 
+20px; color: rgb(51, 
+51, 51); text-align: 
+center;"[39m
+          [36m>[39m
+            
+[0mRegister User[0m
+          
+[36m</span>[39m
+          
+[36m<input[39m
+            [33mplace
+holder[39m=[32m"Full
+ Name"[39m
+            [33mstyle
+[39m=[32m"border-wid
+th: 1px; 
+border-color: 
+rgb(221, 221, 221); 
+border-radius: 8px; 
+padding: 12px; 
+margin-bottom: 16px; 
+font-size: 16px;"[39m
+            [33mvalue
+[39m=[32m""[39m
+          [36m/>[39m
+          
+[36m<input[39m
+            [33mautoc
+apitalize[39m=[32m"n
+one"[39m
+            [33mkeybo
+ardtype[39m=[32m"ema
+il-address"[39m
+            [33mplace
+holder[39m=[32m"Emai
+l Address"[39m
+            [33mstyle
+[39m=[32m"border-wid
+th: 1px; 
+border-color: 
+rgb(221, 221, 221); 
+border-radius: 8px; 
+padding: 12px; 
+margin-bottom: 16px; 
+font-size: 16px;"[39m
+            [33mvalue
+[39m=[32m""[39m
+          [36m/>[39m
+          
+[36m<button>[39m
+            
+[36m<span[39m
+              [33msty
+le[39m=[32m"color: 
+rgb(255, 255, 255); 
+font-size: 16px; 
+font-weight: 
+600;"[39m
+            
+[36m>[39m
+              
+[0mConfirm 
+Registration[0m
+            
+[36m</span>[39m
+          
+[36m</button>[39m
+          
+[36m<button[39m
+            [33mstyle
+[39m=[32m"margin-top
+: 16px; align-items: 
+center;"[39m
+          [36m>[39m
+            
+[36m<span[39m
+              [33msty
+le[39m=[32m"color: 
+rgb(0, 122, 255); 
+font-size: 14px;"[39m
+            
+[36m>[39m
+              
+[0mCancel[0m
+            
+[36m</span>[39m
+          
+[36m</button>[39m
+        
+[36m</div>[39m
+      [36m</div>[39m
+    [36m</body>[39m
+
+    [0m [90m 25 
+|[39m         fireEve
+nt[33m.[39mclick(scr
+een[33m.[39mgetByTex
+t([32m'Confirm Regist
+ration'[39m))[33m;[
+39m
+     [90m 26 |[39m
+    [31m[1m>[22m[3
+9m[90m 27 |[39m     
+    expect(screen[33m
+.[39mgetByText([32m'
+Name and Email are req
+uired'[39m))[33m.[3
+9mtoBeInTheDocument()
+[33m;[39m
+     [90m    |[39m  
+                     
+[31m[1m^[22m[39m
+     [90m 28 |[39m  
+       expect(onRegist
+er)[33m.[39mnot[33m
+.[39mtoHaveBeenCalled
+()[33m;[39m
+     [90m 29 |[39m  
+   })[33m;[39m
+     [90m 30 
+|[39m[0m
+
+      at Object.getEle
+mentError (../node_mod
+ules/@testing-library/
+dom/dist/config.js:37:
+19)
+      at ../node_modul
+es/@testing-library/do
+m/dist/query-helpers.j
+s:76:38
+      at ../node_modul
+es/@testing-library/do
+m/dist/query-helpers.j
+s:52:17
+      at ../node_modul
+es/@testing-library/do
+m/dist/query-helpers.j
+s:95:19
+      at 
+Object.<anonymous> (sr
+c/infra/primary/compon
+ents/RegistrationForm.
+spec.tsx:27:23)
+
+  ÔùÅ 
+RegistrationForm 
+component ÔÇ║ should 
+call onRegister with 
+valid data
+
+    expect(jest.fn()).
+toHaveBeenCalledWith(.
+..expected)
+
+    Expected: 
+{"email": 
+"john@example.com", 
+"name": "John Doe"}
+
+    Number of calls: 0
+
+    Ignored nodes: 
+comments, script, 
+style
+    [36m<html>[39m
+      [36m<head 
+/>[39m
+      [36m<body>[39m
+        
+[36m<div>[39m
+          
+[36m<div[39m
+            [33mstyle
+[39m=[32m"background
+-color: rgb(255, 255, 
+255); border-radius: 
+12px; padding: 24px; 
+width: 90%; 
+max-width: 400px; 
+elevation: 5px;"[39m
+          [36m>[39m
+            
+[36m<span[39m
+              [33msty
+le[39m=[32m"font-siz
+e: 20px; font-weight: 
+bold; margin-bottom: 
+20px; color: rgb(51, 
+51, 51); text-align: 
+center;"[39m
+            
+[36m>[39m
+              
+[0mRegister User[0m
+            
+[36m</span>[39m
+            
+[36m<input[39m
+              [33mpla
+ceholder[39m=[32m"Fu
+ll Name"[39m
+              [33msty
+le[39m=[32m"border-w
+idth: 1px; 
+border-color: 
+rgb(221, 221, 221); 
+border-radius: 8px; 
+padding: 12px; 
+margin-bottom: 16px; 
+font-size: 16px;"[39m
+              [33mval
+ue[39m=[32m""[39m
+            
+[36m/>[39m
+            
+[36m<input[39m
+              [33maut
+ocapitalize[39m=[32m
+"none"[39m
+              [33mkey
+boardtype[39m=[32m"e
+mail-address"[39m
+              [33mpla
+ceholder[39m=[32m"Em
+ail Address"[39m
+              [33msty
+le[39m=[32m"border-w
+idth: 1px; 
+border-color: 
+rgb(221, 221, 221); 
+border-radius: 8px; 
+padding: 12px; 
+margin-bottom: 16px; 
+font-size: 16px;"[39m
+              [33mval
+ue[39m=[32m""[39m
+            
+[36m/>[39m
+            
+[36m<button>[39m
+              
+[36m<span[39m
+                [33ms
+tyle[39m=[32m"color:
+ rgb(255, 255, 255); 
+font-size: 16px; 
+font-weight: 
+600;"[39m
+              
+[36m>[39m
+                
+[0mConfirm 
+Registration[0m
+              
+[36m</span>[39m
+            
+[36m</button>[39m
+            
+[36m<button[39m
+              [33msty
+le[39m=[32m"margin-t
+op: 16px; 
+align-items: 
+center;"[39m
+            
+[36m>[39m
+              
+[36m<span[39m
+                [33ms
+tyle[39m=[32m"color:
+ rgb(0, 122, 255); 
+font-size: 14px;"[39m
+              
+[36m>[39m
+                
+[0mCancel[0m
+              
+[36m</span>[39m
+            
+[36m</button>[39m
+          
+[36m</div>[39m
+        
+[36m</div>[39m
+      
+[36m</body>[39m
+    [36m</html>[39m
+
+    [0m [90m 39 
+|[39m
+     [90m 40 |[39m  
+       
+[36mawait[39m 
+waitFor(() 
+[33m=>[39m {
+    [31m[1m>[22m[3
+9m[90m 41 |[39m     
+        expect(onRegis
+ter)[33m.[39mtoHaveB
+eenCalledWith({ 
+name[33m:[39m 
+[32m'John 
+Doe'[39m[33m,[39m 
+email[33m:[39m [32m
+'john@example.com'[39
+m })[33m;[39m
+     [90m    |[39m  
+                      
+        
+[31m[1m^[22m[39m
+     [90m 42 |[39m  
+       })[33m;[39m
+     [90m 43 |[39m  
+   })[33m;[39m
+     [90m 44 
+|[39m[0m
+
+      at src/infra/pri
+mary/components/Regist
+rationForm.spec.tsx:41
+:32
+      at runWithExpens
+iveErrorDiagnosticsDis
+abled (../node_modules
+/@testing-library/dom/
+dist/config.js:47:12)
+      at 
+checkCallback (../node
+_modules/@testing-libr
+ary/dom/dist/wait-for.
+js:124:77)
+      at checkRealTime
+rsCallback (../node_mo
+dules/@testing-library
+/dom/dist/wait-for.js:
+118:16)
+      at Timeout.task 
+[as _onTimeout] (node_
+modules/jsdom/lib/jsdo
+m/browser/Window.js:57
+9:19)
+
+  ÔùÅ 
+RegistrationForm 
+component ÔÇ║ should 
+show error message if 
+registration fails
+
+    Unable to find an 
+element with the 
+text: Server Error. 
+This could be because 
+the text is broken up 
+by multiple elements. 
+In this case, you can 
+provide a function 
+for your text matcher 
+to make your matcher 
+more flexible.
+
+    Ignored nodes: 
+comments, script, 
+style
+    [36m<body>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mstyle[
+39m=[32m"background-c
+olor: rgb(255, 255, 
+255); border-radius: 
+12px; padding: 24px; 
+width: 90%; 
+max-width: 400px; 
+elevation: 5px;"[39m
+        [36m>[39m
+          
+[36m<span[39m
+            [33mstyle
+[39m=[32m"font-size:
+ 20px; font-weight: 
+bold; margin-bottom: 
+20px; color: rgb(51, 
+51, 51); text-align: 
+center;"[39m
+          [36m>[39m
+            
+[0mRegister User[0m
+          
+[36m</span>[39m
+          
+[36m<input[39m
+            [33mplace
+holder[39m=[32m"Full
+ Name"[39m
+            [33mstyle
+[39m=[32m"border-wid
+th: 1px; 
+border-color: 
+rgb(221, 221, 221); 
+border-radius: 8px; 
+padding: 12px; 
+margin-bottom: 16px; 
+font-size: 16px;"[39m
+            [33mvalue
+[39m=[32m""[39m
+          [36m/>[39m
+          
+[36m<input[39m
+            [33mautoc
+apitalize[39m=[32m"n
+one"[39m
+            [33mkeybo
+ardtype[39m=[32m"ema
+il-address"[39m
+            [33mplace
+holder[39m=[32m"Emai
+l Address"[39m
+            [33mstyle
+[39m=[32m"border-wid
+th: 1px; 
+border-color: 
+rgb(221, 221, 221); 
+border-radius: 8px; 
+padding: 12px; 
+margin-bottom: 16px; 
+font-size: 16px;"[39m
+            [33mvalue
+[39m=[32m""[39m
+          [36m/>[39m
+          
+[36m<button>[39m
+            
+[36m<span[39m
+              [33msty
+le[39m=[32m"color: 
+rgb(255, 255, 255); 
+font-size: 16px; 
+font-weight: 
+600;"[39m
+            
+[36m>[39m
+              
+[0mConfirm 
+Registration[0m
+            
+[36m</span>[39m
+          
+[36m</button>[39m
+          
+[36m<button[39m
+            [33mstyle
+[39m=[32m"margin-top
+: 16px; align-items: 
+center;"[39m
+          [36m>[39m
+            
+[36m<span[39m
+              [33msty
+le[39m=[32m"color: 
+rgb(0, 122, 255); 
+font-size: 14px;"[39m
+            
+[36m>[39m
+              
+[0mCancel[0m
+            
+[36m</span>[39m
+          
+[36m</button>[39m
+        
+[36m</div>[39m
+      [36m</div>[39m
+    [36m</body>[39m
+
+    [0m [90m 52 
+|[39m         fireEve
+nt[33m.[39mclick(scr
+een[33m.[39mgetByTex
+t([32m'Confirm Regist
+ration'[39m))[33m;[
+39m
+     [90m 53 |[39m
+    [31m[1m>[22m[3
+9m[90m 54 |[39m     
+    [36mawait[39m 
+waitFor(() 
+[33m=>[39m {
+     [90m    |[39m  
+                    
+[31m[1m^[22m[39m
+     [90m 55 |[39m  
+           expect(scre
+en[33m.[39mgetByText
+([32m'Server Error'[
+39m))[33m.[39mtoBeIn
+TheDocument()[33m;[3
+9m
+     [90m 56 |[39m  
+       })[33m;[39m
+     [90m 57 |[39m  
+   })[33m;[39m[0m
+
+      at 
+waitForWrapper (../nod
+e_modules/@testing-lib
+rary/dom/dist/wait-for
+.js:163:27)
+      at 
+Object.<anonymous> (sr
+c/infra/primary/compon
+ents/RegistrationForm.
+spec.tsx:54:22)
+
+  ÔùÅ 
+RegistrationForm 
+component ÔÇ║ should 
+call onCancel when 
+clicking cancel
+
+    expect(jest.fn()).
+toHaveBeenCalled()
+
+    Expected number 
+of calls: >= 1
+    Received number 
+of calls:    0
+
+    [0m [90m 61 
+|[39m
+     [90m 62 |[39m  
+       fireEvent[33m.
+[39mclick(screen[33m
+.[39mgetByText([32m'
+Cancel'[39m))[33m;[
+39m
+    [31m[1m>[22m[3
+9m[90m 63 |[39m     
+    expect(onCancel)[
+33m.[39mtoHaveBeenCal
+led()[33m;[39m
+     [90m    |[39m  
+                      
+  [31m[1m^[22m[39m
+     [90m 64 |[39m  
+   })[33m;[39m
+     [90m 65 |[39m 
+})[33m;[39m
+     [90m 66 
+|[39m[0m
+
+      at 
+Object.<anonymous> (sr
+c/infra/primary/compon
+ents/RegistrationForm.
+spec.tsx:63:26)
+
+Test Suites: 1 
+failed, 1 total
+Tests:       4 
+failed, 1 passed, 5 
+total
+Snapshots:   0 total
+Time:        5.912 s, 
+estimated 9 s
+Ran all test suites 
+matching src/infra/pri
+mary/components/Regist
+rationForm.spec.tsx.

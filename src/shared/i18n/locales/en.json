@@ -1,0 +1,127 @@
+{
+    "auth": {
+        "welcome": "Welcome Back",
+        "create_account": "Create Account",
+        "login_subtitle": "Sign in to continue your journey",
+        "register_subtitle": "Start your personalized Quran journey",
+        "login_button": "Sign In",
+        "register_button": "Create Account",
+        "full_name": "Full Name",
+        "email": "Email Address",
+        "password": "Password",
+        "switch_to_signup": "Don't have an account? Sign Up",
+        "switch_to_login": "Already have an account? Sign In",
+        "fill_fields": "Please fill in all fields",
+        "auth_failed": "Authentication failed",
+        "login_success": "Welcome back!",
+        "register_success": "Account created successfully!",
+        "social_continue": "Or continue with",
+        "google": "Google",
+        "facebook": "Facebook"
+    },
+    "common": {
+        "error": "Error",
+        "success": "Success",
+        "loading": "Loading...",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "reset": "Reset",
+        "nuke": "NUKE",
+        "next": "Next",
+        "previous": "Previous",
+        "show": "Show",
+        "hide": "Hide"
+    },
+    "welcome": {
+        "title": "Quran Journey",
+        "subtitle": "Learn, Memorize, Perfect",
+        "get_started": "Get Started",
+        "footer": "Join thousands learning the Quran daily",
+        "features": {
+            "read": {
+                "title": "Read & Learn",
+                "description": "Follow your personalized path"
+            },
+            "memorize": {
+                "title": "Memorize & Compete",
+                "description": "Track progress and compete with others"
+            },
+            "pronunciation": {
+                "title": "Perfect Pronunciation",
+                "description": "Master Tajweed rules"
+            }
+        }
+    },
+    "menu": {
+        "title": "Quran Journey",
+        "greeting": "As-salamu alaykum, {{name}}!",
+        "welcome_back": "Welcome back",
+        "streak": "Current Streak",
+        "days": "Days",
+        "keep_it_up": "Keep it up!",
+        "unlock_all": "Sign in to unlock all features",
+        "unlock_description": "Save your progress, compete with others, and get personalized reminders",
+        "signin_signup": "Sign In / Sign Up",
+        "your_progress": "Your Progress",
+        "current_position": "Current Position",
+        "surah": "Surah",
+        "verse": "Verse",
+        "verses_read": "Verses Read",
+        "verses_memorized": "Verses Memorized",
+        "choose_practice": "Choose Your Practice",
+        "practice_reading": {
+            "title": "Reading",
+            "subtitle": "Read and understand verses",
+            "progress": "{{count}}/{{total}} verses"
+        },
+        "practice_memorizing": {
+            "title": "Memorizing",
+            "subtitle_locked": "Sign in to unlock",
+            "subtitle_unlocked": "Interactive memorization games"
+        },
+        "practice_pronunciation": {
+            "title": "Pronunciation (Tajweed)",
+            "subtitle_locked": "Sign in to unlock",
+            "subtitle_unlocked": "Practice correct pronunciation"
+        }
+    },
+    "reading": {
+    "mode_by_verse": "By Verse",
+    "mode_by_page": "By Page",
+    "verse": "Verse",
+    "select_surah": "Select a surah",
+    "loading_verses": "Loading verses...",
+    "error_loading": "Error loading",
+    "retry": "Retry",
+    "complete_reading": "Complete Reading",
+    "loading_more": "Loading more verses...",
+    "next_surah": "Go to next surah",
+    "select_passage": "Select a passage",
+    "surah": "Surah",
+    "confirm": "Confirm",
+        "title": "Reading",
+        "surah_title": "Surah {{number}}: {{name}}",
+        "your_progress": "Your Progress",
+        "transliteration": "Transliteration",
+        "translation": "Translation",
+        "mark_as_read": "Mark as Read & Continue",
+        "signin_prompt": "Sign in to save your reading progress and unlock more features"
+    },
+    "profile": {
+        "title": "Profile",
+        "guest": "Guest User",
+        "signin_to_sync": "Sign in to sync your progress",
+        "account_settings": "Account Settings",
+        "preferences": "Account Preferences",
+        "notifications": "Notifications",
+        "privacy": "Privacy & Security",
+        "danger_zone": "Danger Zone",
+        "reset_progress": "Reset All Progress",
+        "sign_out": "Sign Out",
+        "sign_out_confirm": "Are you sure you want to sign out? Your local progress will be preserved but you will lose access to synched features.",
+        "reset_confirm": "This will clear all your learning progress. This action cannot be undone.",
+        "nuclear_reset": "Nuclear Reset",
+        "nuclear_confirm": "This will wipe EVERYTHING including sessions. Continue?",
+        "version": "QLearn Version {{version}}"
+    }
+}

@@ -1,0 +1,93 @@
+﻿node.exe : FAIL src/sh
+ared/hooks/useAuth.spe
+c.ts
+Au caractère 
+C:\Program Files\nodej
+s\npx.ps1:29 : 3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (FAIL src/s   
+ hared/hooks/useAu    
+th.spec.ts:String    
+) [], RemoteExcep    
+tion
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  useAuth hook
+    ÔêÜ should load 
+user from storage on 
+mount (18 ms)
+    ÔêÜ should sign 
+in successfully (5 ms)
+    ├ù should handle 
+sign in failure (13 
+ms)
+    ÔêÜ should sign 
+out (3 ms)
+
+  ÔùÅ useAuth hook 
+ÔÇ║ should handle 
+sign in failure
+
+    expect(received).t
+oBeNull()
+
+    Received: 
+{"email": 
+"john@example.com", 
+"id": "1", "name": 
+"John"}
+
+    [0m [90m 53 
+|[39m         
+})[33m;[39m
+     [90m 54 |[39m
+    [31m[1m>[22m[3
+9m[90m 55 |[39m     
+    expect(result[33m
+.[39mcurrent[33m.[3
+9muser)[33m.[39mtoBe
+Null()[33m;[39m
+     [90m    |[39m  
+                      
+             
+[31m[1m^[22m[39m
+     [90m 56 |[39m  
+       expect(result[
+33m.[39mcurrent[33m.
+[39mloading)[33m.[3
+9mtoBe([36mfalse[39m
+)[33m;[39m
+     [90m 57 |[39m  
+       expect(consoleS
+py)[33m.[39mtoHaveBe
+enCalledWith([32m'Sig
+n in failed:'[39m[33
+m,[39m 
+error)[33m;[39m
+     [90m 58 |[39m  
+       consoleSpy[33m
+.[39mmockRestore()[3
+3m;[39m[0m
+
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useAuth
+.spec.ts:55:37)
+
+Test Suites: 1 
+failed, 1 total
+Tests:       1 
+failed, 3 passed, 4 
+total
+Snapshots:   0 total
+Time:        3.684 s
+Ran all test suites 
+matching src/shared/ho
+oks/useAuth.spec.ts.

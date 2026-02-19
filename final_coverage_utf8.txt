@@ -1,0 +1,1205 @@
+﻿node.exe : PASS src/in
+fra/secondary/storage/
+AuthStorage.spec.ts 
+(6.727 s)
+Au caractère 
+C:\Program Files\nodej
+s\npx.ps1:29 : 3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (PASS src/i   
+ nfra/...ec.ts (6.    
+727 s):String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+PASS src/infra/primary
+/components/AuthHeader
+.spec.tsx (7.021 s)
+PASS src/shared/hooks/
+useUsers.spec.ts 
+(7.538 s)
+  ÔùÅ Console
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 21 
+|[39m       setError(
+[36mnull[39m)[33m;
+[39m
+     [90m 22 |[39m  
+     [36mconst[39m 
+data [33m=[39m 
+[36mawait[39m userSe
+rvice[33m.[39mgetAll
+Users()[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 23 |[39m     
+  setUsers(data)[33m;
+[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 24 |[39m  
+   } [36mcatch[39m 
+(err) {
+     [90m 25 |[39m  
+     setError(err 
+[36minstanceof[39m 
+[33mError[39m 
+[33m?[39m 
+err[33m.[39mmessage 
+[33m:[39m 
+[32m'Unknown error'[
+39m)[33m;[39m
+     [90m 26 |[39m  
+   } 
+[36mfinally[39m 
+{[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at setUsers (src
+/shared/hooks/useUsers
+.ts:23:7)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 25 
+|[39m       
+setError(err 
+[36minstanceof[39m 
+[33mError[39m 
+[33m?[39m 
+err[33m.[39mmessage 
+[33m:[39m 
+[32m'Unknown error'[
+39m)[33m;[39m
+     [90m 26 |[39m  
+   } 
+[36mfinally[39m {
+    [31m[1m>[22m[3
+9m[90m 27 |[39m     
+  setLoading([36mfals
+e[39m)[33m;[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 28 |[39m  
+   }
+     [90m 29 |[39m  
+ }[33m;[39m
+     [90m 30 
+|[39m[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at setLoading (s
+rc/shared/hooks/useUse
+rs.ts:27:7)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 18 
+|[39m   
+[36mconst[39m 
+loadUsers [33m=[39m 
+[36masync[39m () 
+[33m=>[39m {
+     [90m 19 |[39m  
+   [36mtry[39m {
+    [31m[1m>[22m[3
+9m[90m 20 |[39m     
+  setLoading([36mtrue
+[39m)[33m;[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 21 |[39m  
+     setError([36mnul
+l[39m)[33m;[39m
+     [90m 22 |[39m  
+     [36mconst[39m 
+data [33m=[39m 
+[36mawait[39m userSe
+rvice[33m.[39mgetAll
+Users()[33m;[39m
+     [90m 23 |[39m  
+     setUsers(data)[3
+3m;[39m[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setLoading [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:20:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:107:26)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 19 
+|[39m     
+[36mtry[39m {
+     [90m 20 |[39m  
+     setLoading([36mt
+rue[39m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 21 |[39m     
+  setError([36mnull[
+39m)[33m;[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 22 |[39m  
+     [36mconst[39m 
+data [33m=[39m 
+[36mawait[39m userSe
+rvice[33m.[39mgetAll
+Users()[33m;[39m
+     [90m 23 |[39m  
+     setUsers(data)[3
+3m;[39m
+     [90m 24 |[39m  
+   } [36mcatch[39m 
+(err) {[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setError [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:21:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:107:26)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 21 
+|[39m       setError(
+[36mnull[39m)[33m;
+[39m
+     [90m 22 |[39m  
+     [36mconst[39m 
+data [33m=[39m 
+[36mawait[39m userSe
+rvice[33m.[39mgetAll
+Users()[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 23 |[39m     
+  setUsers(data)[33m;
+[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 24 |[39m  
+   } [36mcatch[39m 
+(err) {
+     [90m 25 |[39m  
+     setError(err 
+[36minstanceof[39m 
+[33mError[39m 
+[33m?[39m 
+err[33m.[39mmessage 
+[33m:[39m 
+[32m'Unknown error'[
+39m)[33m;[39m
+     [90m 26 |[39m  
+   } 
+[36mfinally[39m 
+{[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setUsers [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:23:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:107:5)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 25 
+|[39m       
+setError(err 
+[36minstanceof[39m 
+[33mError[39m 
+[33m?[39m 
+err[33m.[39mmessage 
+[33m:[39m 
+[32m'Unknown error'[
+39m)[33m;[39m
+     [90m 26 |[39m  
+   } 
+[36mfinally[39m {
+    [31m[1m>[22m[3
+9m[90m 27 |[39m     
+  setLoading([36mfals
+e[39m)[33m;[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 28 |[39m  
+   }
+     [90m 29 |[39m  
+ }[33m;[39m
+     [90m 30 
+|[39m[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setLoading [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:27:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:107:5)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 18 
+|[39m   
+[36mconst[39m 
+loadUsers [33m=[39m 
+[36masync[39m () 
+[33m=>[39m {
+     [90m 19 |[39m  
+   [36mtry[39m {
+    [31m[1m>[22m[3
+9m[90m 20 |[39m     
+  setLoading([36mtrue
+[39m)[33m;[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 21 |[39m  
+     setError([36mnul
+l[39m)[33m;[39m
+     [90m 22 |[39m  
+     [36mconst[39m 
+data [33m=[39m 
+[36mawait[39m userSe
+rvice[33m.[39mgetAll
+Users()[33m;[39m
+     [90m 23 |[39m  
+     setUsers(data)[3
+3m;[39m[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setLoading [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:20:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:122:26)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 19 
+|[39m     
+[36mtry[39m {
+     [90m 20 |[39m  
+     setLoading([36mt
+rue[39m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 21 |[39m     
+  setError([36mnull[
+39m)[33m;[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 22 |[39m  
+     [36mconst[39m 
+data [33m=[39m 
+[36mawait[39m userSe
+rvice[33m.[39mgetAll
+Users()[33m;[39m
+     [90m 23 |[39m  
+     setUsers(data)[3
+3m;[39m
+     [90m 24 |[39m  
+   } [36mcatch[39m 
+(err) {[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setError [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:21:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:122:26)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 21 
+|[39m       setError(
+[36mnull[39m)[33m;
+[39m
+     [90m 22 |[39m  
+     [36mconst[39m 
+data [33m=[39m 
+[36mawait[39m userSe
+rvice[33m.[39mgetAll
+Users()[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 23 |[39m     
+  setUsers(data)[33m;
+[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 24 |[39m  
+   } [36mcatch[39m 
+(err) {
+     [90m 25 |[39m  
+     setError(err 
+[36minstanceof[39m 
+[33mError[39m 
+[33m?[39m 
+err[33m.[39mmessage 
+[33m:[39m 
+[32m'Unknown error'[
+39m)[33m;[39m
+     [90m 26 |[39m  
+   } 
+[36mfinally[39m 
+{[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setUsers [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:23:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:122:5)
+
+    console.error
+      An update to 
+TestComponent inside 
+a test was not 
+wrapped in act(...).
+      
+      When testing, 
+code that causes 
+React state updates 
+should be wrapped 
+into act(...):
+      
+      act(() => {
+        /* fire 
+events that update 
+state */
+      });
+      /* assert on 
+the output */
+      
+      This ensures 
+that you're testing 
+the behavior the user 
+would see in the 
+browser. Learn more 
+at https://react.dev/l
+ink/wrap-tests-with-ac
+t
+
+    [0m [90m 25 
+|[39m       
+setError(err 
+[36minstanceof[39m 
+[33mError[39m 
+[33m?[39m 
+err[33m.[39mmessage 
+[33m:[39m 
+[32m'Unknown error'[
+39m)[33m;[39m
+     [90m 26 |[39m  
+   } 
+[36mfinally[39m {
+    [31m[1m>[22m[3
+9m[90m 27 |[39m     
+  setLoading([36mfals
+e[39m)[33m;[39m
+     [90m    |[39m  
+     
+[31m[1m^[22m[39m
+     [90m 28 |[39m  
+   }
+     [90m 29 |[39m  
+ }[33m;[39m
+     [90m 30 
+|[39m[0m
+
+      at node_modules/
+react-dom/cjs/react-do
+m-client.development.j
+s:16023:19
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at warnIfUpdates
+NotWrappedWithActDEV (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16022:9
+)
+      at 
+scheduleUpdateOnFiber 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14396:
+11)
+      at dispatchSetSt
+ateInternal (node_modu
+les/react-dom/cjs/reac
+t-dom-client.developme
+nt.js:6969:13)
+      at 
+dispatchSetState (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:6927:7)
+      at 
+Object.setLoading [as 
+refetch] (src/shared/h
+ooks/useUsers.ts:27:7)
+      at 
+Object.<anonymous> (sr
+c/shared/hooks/useUser
+s.spec.ts:122:5)
+
+PASS src/infra/seconda
+ry/api/apiClient.spec.
+ts (7.228 s)
+PASS src/shared/hooks/
+useAuth.spec.ts 
+(7.389 s)
+PASS ./index.spec.ts 
+(7.677 s)
+PASS src/infra/seconda
+ry/repositories/UserAp
+iRepository.spec.ts 
+(7.455 s)
+PASS src/domain/usecas
+es/RegisterUserUseCase
+.spec.ts (7.727 s)
+PASS src/domain/usecas
+es/GetAllUsersUseCase.
+spec.ts (8.081 s)
+PASS src/application/s
+ervices/UserApplicatio
+nService.spec.ts 
+(8.306 s)
+PASS src/infra/primary
+/components/Registrati
+onForm.spec.tsx 
+(8.407 s)
+  ÔùÅ Console
+
+    console.error
+      React does not 
+recognize the 
+`keyboardType` prop 
+on a DOM element. If 
+you intentionally 
+want it to appear in 
+the DOM as a custom 
+attribute, spell it 
+as lowercase 
+`keyboardtype` 
+instead. If you 
+accidentally passed 
+it from a parent 
+component, remove it 
+from the DOM element.
+
+    [0m [90m 13 
+|[39m
+     [90m 14 |[39m  
+   it([32m'should 
+render the 
+form'[39m[33m,[39m 
+() [33m=>[39m {
+    [31m[1m>[22m[3
+9m[90m 15 |[39m     
+    render([33m<[39m
+[33mRegistrationForm
+[39m onRegister[33m=
+[39m{onRegister} onCan
+cel[33m=[39m{onCance
+l} [33m/[39m[33m>[
+39m)[33m;[39m
+     [90m    |[39m  
+             
+[31m[1m^[22m[39m
+     [90m 16 |[39m
+     [90m 17 |[39m  
+       expect(screen[
+33m.[39mgetByPlacehol
+derText([32m'Full Nam
+e'[39m))[33m.[39mto
+BeInTheDocument()[33m
+;[39m
+     [90m 18 |[39m  
+       expect(screen[
+33m.[39mgetByPlacehol
+derText([32m'Email Ad
+dress'[39m))[33m.[3
+9mtoBeInTheDocument()
+[33m;[39m[0m
+
+      at 
+validateProperty (node
+_modules/react-dom/cjs
+/react-dom-client.deve
+lopment.js:3009:19)
+      at 
+warnUnknownProperties 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:3154:9
+)
+      at validatePrope
+rtiesInDevelopment (no
+de_modules/react-dom/c
+js/react-dom-client.de
+velopment.js:17117:9)
+      at 
+setInitialProperties (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:17741:7
+)
+      at completeWork 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:11391:
+18)
+      at 
+runWithFiberInDEV (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:1522:13)
+      at 
+completeUnitOfWork (no
+de_modules/react-dom/c
+js/react-dom-client.de
+velopment.js:15268:19)
+      at 
+performUnitOfWork (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:15149:11)
+      at workLoopSync 
+(node_modules/react-do
+m/cjs/react-dom-client
+.development.js:14956:
+41)
+      at 
+renderRootSync (node_m
+odules/react-dom/cjs/r
+eact-dom-client.develo
+pment.js:14936:11)
+      at 
+performWorkOnRoot (nod
+e_modules/react-dom/cj
+s/react-dom-client.dev
+elopment.js:14419:13)
+      at performWorkOn
+RootViaSchedulerTask (
+node_modules/react-dom
+/cjs/react-dom-client.
+development.js:16216:7
+)
+      at 
+flushActQueue (node_mo
+dules/react/cjs/react.
+development.js:566:34)
+      at process.env.N
+ODE_ENV.exports.act (n
+ode_modules/react/cjs/
+react.development.js:8
+59:10)
+      at ../node_modul
+es/@testing-library/re
+act/dist/act-compat.js
+:46:25
+      at renderRoot (.
+./node_modules/@testin
+g-library/react/dist/p
+ure.js:189:26)
+      at render (../no
+de_modules/@testing-li
+brary/react/dist/pure.
+js:291:10)
+      at 
+Object.<anonymous> (sr
+c/infra/primary/compon
+ents/RegistrationForm.
+spec.tsx:15:15)
+
+PASS ./App.spec.tsx 
+(8.433 s)
+-----------------------------------------|---------|----------|---------|---------|-------------------
+File                                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------------------------|---------|----------|---------|---------|-------------------
+All files                                |   98.63 |     90.9 |     100 |   98.54 |                   
+ app-ui                                  |   92.59 |      100 |     100 |   92.59 |                   
+  App.tsx                                |   91.66 |      100 |     100 |   91.66 | 31-32             
+  index.ts                               |     100 |      100 |     100 |     100 |                   
+ app-ui/src/application/services         |     100 |      100 |     100 |     100 |                   
+  UserApplicationService.ts              |     100 |      100 |     100 |     100 |                   
+ app-ui/src/domain/usecases              |     100 |      100 |     100 |     100 |                   
+  GetAllUsersUseCase.ts                  |     100 |      100 |     100 |     100 |                   
+  RegisterUserUseCase.ts                 |     100 |      100 |     100 |     100 |                   
+ app-ui/src/infra/primary/components     |     100 |    92.85 |     100 |     100 |                   
+  AuthHeader.tsx                         |     100 |      100 |     100 |     100 |                   
+  RegistrationForm.tsx                   |     100 |    91.66 |     100 |     100 | 26                
+ app-ui/src/infra/secondary/api          |     100 |      100 |     100 |     100 |                   
+  apiClient.ts                           |     100 |      100 |     100 |     100 |                   
+ app-ui/src/infra/secondary/repositories |     100 |      100 |     100 |     100 |                   
+  UserApiRepository.ts                   |     100 |      100 |     100 |     100 |                   
+ app-ui/src/infra/secondary/storage      |     100 |     62.5 |     100 |     100 |                   
+  AuthStorage.ts                         |     100 |     62.5 |     100 |     100 | 10-16,24          
+ app-ui/src/shared/hooks                 |     100 |      100 |     100 |     100 |                   
+  useAuth.ts                             |     100 |      100 |     100 |     100 |                   
+  useUsers.ts                            |     100 |      100 |     100 |     100 |                   
+-----------------------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 12 
+passed, 12 total
+Tests:       63 
+passed, 63 total
+Snapshots:   0 total
+Time:        16.379 s
+Ran all test suites.
