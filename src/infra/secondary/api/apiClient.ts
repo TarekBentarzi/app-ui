@@ -11,9 +11,17 @@ const getApiBaseUrl = () => {
     return 'http://localhost:3000';
   }
 
+  // Mobile: Extract IP from Expo's hostUri
   const debuggerHost = Constants.expoConfig?.hostUri;
-  const localhost = debuggerHost ? debuggerHost.split(':')[0] : '172.16.174.149';
-  return `http://${localhost}:3000`;
+  if (debuggerHost) {
+    const host = debuggerHost.split(':')[0];
+    console.log(`[API] Detected mobile IP from hostUri: ${host}`);
+    return `http://${host}:3000`;
+  }
+  
+  // Fallback to a default IP (update this to your local network IP)
+  console.warn('[API] Could not detect IP from hostUri, using fallback IP');
+  return 'http://192.168.1.127:3000';
 };
 
 let authToken: string | null = null;
@@ -87,6 +95,24 @@ export const apiClient = {
       return response.json();
     } catch (error) {
       console.error(`[API] PATCH ${url} - Error:`, error);
+      throw error;
+    }
+  },
+
+  put: async (endpoint: string, data: any) => {
+    const url = `${apiClient.getBaseUrl()}${endpoint}`;
+    console.log(`[API] PUT ${url}`, data);
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: apiClient.getHeaders(),
+        body: JSON.stringify(data),
+      });
+      console.log(`[API] PUT ${url} - Status: ${response.status}`);
+      if (!response.ok) throw new Error(`API Error: ${response.status}`);
+      return response.json();
+    } catch (error) {
+      console.error(`[API] PUT ${url} - Error:`, error);
       throw error;
     }
   },

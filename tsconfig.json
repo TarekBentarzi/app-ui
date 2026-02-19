@@ -4,14 +4,15 @@
     "paths": {
       "@/*": [
         "src/*"
-      ] // <- dit à TS que @/ = src/
+      ]
     },
-    "target": "ES2021", // Version ECMAScript cible
-    "module": "ES2022", // Module ES pour Jest et Node
+    "target": "ES2021",
+    "module": "ES2022",
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -22,5 +23,6 @@
     "babel.config.js",
     "metro.config.js",
     "jest.config.ts"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }

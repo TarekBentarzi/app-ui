@@ -3,9 +3,9 @@ import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 import { I18nManager } from 'react-native';
 
-const en = require('./locales/en.json');
-const fr = require('./locales/fr.json');
-const ar = require('./locales/ar.json');
+import en from './locales/en.json';
+import fr from './locales/fr.json';
+import ar from './locales/ar.json';
 
 const resources = {
     en: { translation: en },

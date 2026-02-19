@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { BookOpen, Brain, Mic, User, Bell, Lock, Flame } from 'lucide-react-native';
+import { BookOpen, Brain, Mic, User, Bell, Lock, Flame, BookMarked } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/shared/contexts/AuthContext';
 import { useUserProgress } from '@/shared/contexts/UserProgressContext';
@@ -209,6 +209,23 @@ export const MainMenuScreen = ({ navigation }: MainMenuScreenProps) => {
                     )}
                 </View>
             </TouchableOpacity>
+
+            {/* Quran - Always Available */}
+            <TouchableOpacity
+                testID="quran-card"
+                style={styles.sectionCard}
+                onPress={() => navigation.navigate('QuranDashboard')}
+            >
+                <View style={[styles.sectionIcon, styles.quranIcon]}>
+                    <BookMarked color="#16a34a" size={32} />
+                </View>
+                <View style={styles.sectionContent}>
+                    <Text style={styles.sectionCardTitle}>Quran Complet</Text>
+                    <Text style={styles.sectionDescription}>
+                        Accédez au Quran complet avec audio et traduction
+                    </Text>
+                </View>
+            </TouchableOpacity>
         </ScrollView>
     );
 };
@@ -400,6 +417,9 @@ const styles = StyleSheet.create({
     },
     pronunciationIcon: {
         backgroundColor: '#dbeafe',
+    },
+    quranIcon: {
+        backgroundColor: '#dcfce7',
     },
     lockedIcon: {
         backgroundColor: '#e5e7eb',

@@ -92,7 +92,21 @@
         "transliteration": "Translittération",
         "translation": "Traduction",
         "mark_as_read": "Marquer comme lu & Continuer",
-        "signin_prompt": "Connectez-vous pour sauvegarder votre progression"
+        "signin_prompt": "Connectez-vous pour sauvegarder votre progression",
+        "mode_by_verse": "Par Verset",
+        "mode_by_verse": "Par Verset",
+        "mode_by_page": "Par Page",
+        "verse": "Verset",
+        "select_surah": "Sélectionner une sourate",
+        "loading_verses": "Chargement des versets...",
+        "error_loading": "Erreur lors du chargement",
+        "retry": "Réessayer",
+        "complete_reading": "Lecture complète",
+        "loading_more": "Chargement de plus de versets...",
+        "next_surah": "Passer à la sourate suivante",
+        "select_passage": "Sélectionner un passage",
+        "surah": "Sourate",
+        "confirm": "Confirmer"
     },
     "profile": {
         "title": "Profil",

@@ -8,6 +8,9 @@ import { MemorizingScreen } from '../screens/MemorizingScreen';
 import { PronunciationScreen } from '../screens/PronunciationScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
+import { SouratesList } from '../quran/SouratesList';
+import { VersetsList } from '../quran/VersetsList';
+import { QuranDashboard } from '../quran/QuranDashboard';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +57,24 @@ export const AppNavigator = () => {
                 <Stack.Screen
                     name="Profile"
                     component={ProfileScreen}
+                />
+
+                <Stack.Screen
+                    name="QuranDashboard"
+                    component={QuranDashboard}
+                    options={{ title: 'Quran' }}
+                />
+
+                <Stack.Screen
+                    name="SouratesList"
+                    component={SouratesList}
+                    options={{ title: 'Sourates' }}
+                />
+
+                <Stack.Screen
+                    name="VersetsList"
+                    component={VersetsList}
+                    options={{ title: 'Versets' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
