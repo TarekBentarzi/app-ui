@@ -2,6 +2,7 @@
 export { quranService } from './QuranService';
 export { progressService } from './ProgressService';
 export { memorizationService } from './MemorizationService';
+export { quizService } from './QuizService';
 
 // Export types
 export type {
@@ -9,4 +10,7 @@ export type {
   Verset,
   UserSave,
   UserMemorization,
+  QuizQuestion,
+  QuizAttempt,
+  SourateQuizStats,
 } from './types';

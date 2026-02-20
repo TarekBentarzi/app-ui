@@ -92,7 +92,8 @@
         "transliteration": "النقحرة",
         "translation": "الترجمة",
         "mark_as_read": "تحديد كمقروء والمتابعة",
-        "signin_prompt": "سجل الدخول لحفظ تقدمك في القراءة وفتح المزيد من الميزات"
+        "signin_prompt": "سجل الدخول لحفظ تقدمك في القراءة وفتح المزيد من الميزات",
+        "mode_mushaf": "صيغة المصحف"
     },
     "profile": {
         "title": "الملف الشخصي",
@@ -110,5 +111,38 @@
         "nuclear_reset": "إعادة ضبط شاملة",
         "nuclear_confirm": "سيؤدي هذا إلى مسح كل شيء بما في ذلك الجلسات. هل تريد الاستمرار؟",
         "version": "QLearn إصدار {{version}}"
+    },
+    "quiz": {
+        "title": "اختبار الحفظ",
+        "loading": "جاري التحميل...",
+        "signin_required": "تسجيل الدخول مطلوب",
+        "signin_prompt": "سجل الدخول للوصول إلى الاختبارات",
+        "no_sourates": "لا توجد سور متاحة",
+        "complete_sourates_first": "أكمل قراءة السور أولاً لفتح الاختبارات",
+        "sourates_count": "{{count}} سورة متاحة",
+        "questions": "أسئلة",
+        "correct": "صحيحة",
+        "incorrect": "خاطئة",
+        "progress": "التقدم",
+        "daily_quiz": "اختبار اليوم",
+        "new_questions": "أسئلة جديدة",
+        "all_completed": "تم إكمال كل شيء!",
+        "loading_questions": "جاري تحميل الأسئلة...",
+        "no_questions": "لا توجد أسئلة متاحة",
+        "try_again_later": "حاول مرة أخرى لاحقاً",
+        "results": "النتائج",
+        "perfect_score": "درجة مثالية!",
+        "great_job": "عمل رائع!",
+        "back_to_list": "العودة إلى القائمة",
+        "retry": "إعادة المحاولة",
+        "question_of": "السؤال {{current}} من {{total}}",
+        "verse": "الآية",
+        "fill_in_blank": "املأ الفراغ:",
+        "correct_answer": "إجابة صحيحة!",
+        "wrong_answer": "إجابة خاطئة",
+        "great_job_text": "ممتاز! استمر!",
+        "correct_answer_was": "الإجابة الصحيحة كانت: {{answer}}",
+        "next": "التالي",
+        "see_results": "عرض النتائج"
     }
 }

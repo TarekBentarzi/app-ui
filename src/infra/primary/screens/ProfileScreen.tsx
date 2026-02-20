@@ -15,21 +15,19 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     const { resetProgress } = useUserProgress();
 
     const handleSignOut = () => {
-        Alert.alert(
-            t('profile.sign_out'),
-            t('profile.sign_out_confirm'),
-            [
-                { text: t('common.cancel'), style: 'cancel' },
-                {
-                    text: t('profile.sign_out'),
-                    style: 'destructive',
-                    onPress: async () => {
-                        await signOut();
-                        navigation.navigate('Welcome');
-                    }
-                },
-            ]
-        );
+        // Sur web, window.confirm fonctionne mieux que Alert.alert
+        const confirmLogout = typeof window !== 'undefined' && window.confirm 
+            ? window.confirm(t('profile.sign_out_confirm'))
+            : true;
+            
+        if (confirmLogout) {
+            (async () => {
+                console.log('[ProfileScreen] Déconnexion...');
+                await signOut();
+                console.log('[ProfileScreen] Déconnexion terminée, navigation vers Welcome');
+                navigation.navigate('Welcome');
+            })();
+        }
     };
 
     const handleReset = () => {

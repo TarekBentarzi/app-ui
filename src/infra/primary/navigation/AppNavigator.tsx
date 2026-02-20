@@ -11,6 +11,8 @@ import { ProfileScreen } from '../screens/ProfileScreen';
 import { SouratesList } from '../quran/SouratesList';
 import { VersetsList } from '../quran/VersetsList';
 import { QuranDashboard } from '../quran/QuranDashboard';
+import { QuizListScreen } from '../screens/QuizListScreen';
+import { QuizScreen } from '../screens/QuizScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -76,6 +78,16 @@ export const AppNavigator = () => {
                     component={VersetsList}
                     options={{ title: 'Versets' }}
                 />
+
+                <Stack.Screen
+                    name="QuizList"
+                    component={QuizListScreen}
+                    options={{ title: 'My Quiz' }}
+                />
+
+                <Stack.Screen name="Quiz">
+                    {(props) => <QuizScreen {...props} />}
+                </Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -50,5 +50,6 @@ export class UserApplicationService {
     await this.logoutUserUseCase.execute();
     apiClient.setToken(null);
     AuthStorage.clearToken();
+    AuthStorage.clearUser(); // Nettoyer aussi l'utilisateur
   }
 }

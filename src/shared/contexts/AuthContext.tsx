@@ -78,9 +78,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await userService.logout();
             apiClient.setToken(null);
             setUser(null);
+            AuthStorage.clearUser(); // Nettoyer aussi l'utilisateur du localStorage
             console.log('[AuthContext] signOut success');
         } catch (error) {
             console.error('[AuthContext] signOut failed:', error);
+            // Même en cas d'erreur, déconnecter localement
+            apiClient.setToken(null);
+            setUser(null);
+            AuthStorage.clearUser();
         }
     }, []);
 
