@@ -12,6 +12,7 @@ import { useAuth } from '@/shared/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useSourates } from '@/shared/hooks';
 import { quizService, QuizQuestion } from '@/infra/secondary/quran';
+import { QuizResultModal } from './components/QuizResultModal';
 
 interface QuizScreenProps {
   navigation: any;
@@ -101,6 +102,25 @@ export const QuizScreen = ({ navigation, route }: QuizScreenProps) => {
     loadQuiz();
   };
 
+  const handleContinueQuizzes = () => {
+    setQuizCompleted(false);
+    navigation.navigate('QuizList');
+  };
+
+  const handleRedoSourate = () => {
+    setQuizCompleted(false);
+    navigation.navigate('Reading', { sourateNumero });
+  };
+
+  const handleNextSourate = () => {
+    setQuizCompleted(false);
+    if (sourateNumero < 114) {
+      navigation.navigate('Reading', { sourateNumero: sourateNumero + 1 });
+    } else {
+      navigation.navigate('QuizList');
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.centerContainer}>
@@ -138,81 +158,32 @@ export const QuizScreen = ({ navigation, route }: QuizScreenProps) => {
   }
 
   if (quizCompleted) {
-    const percentage = Math.round((score / questions.length) * 100);
-    const isPerfect = score === questions.length;
-
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <ArrowLeft color="#374151" size={20} />
-          </TouchableOpacity>
-          <Text style={styles.title}>{t('quiz.results')}</Text>
-        </View>
-        <ScrollView
-          style={styles.scrollContent}
-          contentContainerStyle={styles.content}
-        >
-          <View style={styles.resultsContainer}>
-            <View
-              style={[
-                styles.trophyContainer,
-                isPerfect && styles.trophyContainerPerfect,
-              ]}
+      <>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
             >
-              <Trophy
-                color={isPerfect ? '#f59e0b' : '#9333ea'}
-                size={80}
-              />
-            </View>
-            <Text style={styles.resultsTitle}>
-              {isPerfect ? t('quiz.perfect_score') : t('quiz.great_job')}
-            </Text>
-            <Text style={styles.resultsScore}>
-              {score}/{questions.length}
-            </Text>
-            <Text style={styles.resultsPercentage}>{percentage}%</Text>
-
-            <View style={styles.resultsSummary}>
-              <View style={styles.summaryItem}>
-                <Check color="#10b981" size={24} />
-                <Text style={styles.summaryValue}>{score}</Text>
-                <Text style={styles.summaryLabel}>{t('quiz.correct')}</Text>
-              </View>
-              <View style={styles.summaryItem}>
-                <X color="#ef4444" size={24} />
-                <Text style={styles.summaryValue}>
-                  {questions.length - score}
-                </Text>
-                <Text style={styles.summaryLabel}>{t('quiz.incorrect')}</Text>
-              </View>
-            </View>
-
-            <View style={styles.resultsActions}>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.primaryButton]}
-                onPress={() => navigation.goBack()}
-              >
-                <Text style={styles.primaryButtonText}>
-                  {t('quiz.back_to_list')}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.secondaryButton]}
-                onPress={handleRetry}
-              >
-                <RefreshCw color="#9333ea" size={18} />
-                <Text style={styles.secondaryButtonText}>
-                  {t('quiz.retry')}
-                </Text>
-              </TouchableOpacity>
-            </View>
+              <ArrowLeft color="#374151" size={20} />
+            </TouchableOpacity>
+            <Text style={styles.title}>{sourate?.nomTraduction}</Text>
           </View>
-        </ScrollView>
-      </View>
+        </View>
+        
+        <QuizResultModal
+          visible={quizCompleted}
+          score={score}
+          totalQuestions={questions.length}
+          sourateNumber={sourateNumero}
+          sourateName={sourate?.nomTraduction || ''}
+          onContinueQuizzes={handleContinueQuizzes}
+          onRedoSourate={handleRedoSourate}
+          onNextSourate={handleNextSourate}
+          onClose={() => navigation.goBack()}
+        />
+      </>
     );
   }
 

@@ -3,3 +3,4 @@ export * from './useSourates';
 export * from './useVersets';
 export * from './useProgress';
 export * from './useMemorization';
+export * from './useBookmarks';

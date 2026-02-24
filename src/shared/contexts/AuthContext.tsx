@@ -5,6 +5,7 @@ import { UserApiRepository } from '@/infra/secondary/repositories/UserApiReposit
 import { AuthStorage } from '@/infra/secondary/storage/AuthStorage';
 import { CreateUserInput } from '@/domain/entities/User';
 import { apiClient } from '@/infra/secondary/api/apiClient';
+import { progressService, memorizationService, quizService } from '@/infra/secondary/quran';
 
 interface AuthContextType {
     user: UserDTO | null;
@@ -31,6 +32,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (savedUser && savedToken) {
             setUser(savedUser);
             apiClient.setToken(savedToken);
+            // Configurer le token pour tous les services
+            progressService.setAuthToken(savedToken);
+            memorizationService.setAuthToken(savedToken);
+            quizService.setAuthToken(savedToken);
+            console.log('[AuthContext] Token configured for all services');
         } else if (savedUser || savedToken) {
             console.warn('[AuthContext] Partial session found, clearing...');
             AuthStorage.clearUser();
@@ -41,10 +47,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
         console.log('[AuthContext] signIn called', { email });
         try {
-            const { user: loggedUser } = await userService.login(email, password);
+            const { user: loggedUser, token } = await userService.login(email, password);
             console.log('[AuthContext] signIn success', loggedUser);
             setUser(loggedUser);
             AuthStorage.saveUser(loggedUser);
+            // Le token est déjà configuré dans userService.login, mais on le configure aussi pour les autres services
+            progressService.setAuthToken(token);
+            memorizationService.setAuthToken(token);
+            quizService.setAuthToken(token);
+            console.log('[AuthContext] Token configured for all services after login');
             return loggedUser;
         } catch (error) {
             console.error('[AuthContext] signIn failed:', error);
@@ -60,9 +71,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const newUser = await userService.register(data);
             console.log('[AuthContext] signUp success, attempting auto-login...');
-            const { user: loggedUser } = await userService.login(data.email, data.password);
+            const { user: loggedUser, token } = await userService.login(data.email, data.password);
             setUser(loggedUser);
             AuthStorage.saveUser(loggedUser);
+            // Configurer le token pour tous les services
+            progressService.setAuthToken(token);
+            memorizationService.setAuthToken(token);
+            quizService.setAuthToken(token);
+            console.log('[AuthContext] Token configured for all services after signup');
             return loggedUser;
         } catch (error) {
             console.error('[AuthContext] signUp failed:', error);

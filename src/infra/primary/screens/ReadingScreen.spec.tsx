@@ -11,10 +11,12 @@ jest.mock('react-i18next', () => ({
 jest.mock('lucide-react-native', () => ({
     ArrowLeft: 'ArrowLeft',
     BookmarkPlus: 'BookmarkPlus',
+    Bookmark: 'Bookmark',
     Volume2: 'Volume2',
     ChevronLeft: 'ChevronLeft',
     ChevronRight: 'ChevronRight',
     Check: 'Check',
+    ChevronDown: 'ChevronDown',
 }));
 
 const mockUpdateProgress = jest.fn();
@@ -29,6 +31,42 @@ jest.mock('@/shared/contexts/UserProgressContext', () => ({
     useUserProgress: jest.fn(() => ({
         progress: { currentVerse: 1, versesRead: 0 },
         updateProgress: mockUpdateProgress,
+    })),
+}));
+
+jest.mock('@/shared/hooks', () => ({
+    useSourates: jest.fn(() => ({
+        sourates: [],
+        loading: false,
+        error: null,
+    })),
+    useVersets: jest.fn(() => ({
+        versets: [],
+        loading: false,
+        error: null,
+    })),
+    useAllVersets: jest.fn(() => ({
+        versets: [],
+        loading: false,
+        loadingMore: false,
+        hasMore: false,
+        loadMore: jest.fn(),
+        sourates: [],
+    })),
+    useProgress: jest.fn(() => ({
+        progress: null,
+        loading: false,
+        saveProgress: jest.fn(),
+    })),
+    useBookmarks: jest.fn(() => ({
+        bookmarks: [],
+        isBookmarked: jest.fn(() => false),
+        toggleBookmark: jest.fn(),
+        addBookmark: jest.fn(),
+        removeBookmark: jest.fn(),
+        updateNote: jest.fn(),
+        clearAll: jest.fn(),
+        loading: false,
     })),
 }));
 

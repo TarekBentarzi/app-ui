@@ -30,7 +30,8 @@
         "next": "Suivant",
         "previous": "Précédent",
         "show": "Afficher",
-        "hide": "Masquer"
+        "hide": "Masquer",
+        "what_next": "Que voulez-vous faire ensuite ?"
     },
     "welcome": {
         "title": "Parcours Coranique",
@@ -104,9 +105,14 @@
         "complete_reading": "Lecture complète",
         "loading_more": "Chargement de plus de versets...",
         "next_surah": "Passer à la sourate suivante",
+        "completed": "Terminé ✓",
         "select_passage": "Sélectionner un passage",
         "surah": "Sourate",
-        "confirm": "Confirmer"
+        "confirm": "Confirmer",
+        "bookmark_added": "Marque-page ajouté",
+        "bookmark_removed": "Marque-page supprimé",
+        "bookmarks": "Marque-pages",
+        "no_bookmarks": "Aucun marque-page"
     },
     "profile": {
         "title": "Profil",
@@ -157,5 +163,16 @@
         "correct_answer_was": "La bonne réponse était : {{answer}}",
         "next": "Suivant",
         "see_results": "Voir les résultats"
+    },
+    "sourate_completion": {
+        "congratulations": "Félicitations !",
+        "completed_sourate": "Vous avez terminé la sourate {{number}} : {{name}}",
+        "test_learning": "Voulez-vous tester votre apprentissage ?",
+        "start_quiz": "Commencer le Quiz",
+        "skip": "Passer",
+        "skip_to": "Passer à",
+        "continue_to_next": "Continuer vers la sourate suivante",
+        "redo_sourate": "Refaire cette sourate",
+        "stay_in_quiz": "Continuer les quiz"
     }
 }

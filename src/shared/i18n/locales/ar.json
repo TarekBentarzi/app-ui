@@ -30,7 +30,8 @@
         "next": "التالي",
         "previous": "السابق",
         "show": "إظهار",
-        "hide": "إخفاء"
+        "hide": "إخفاء",
+        "what_next": "ماذا تريد أن تفعل بعد ذلك؟"
     },
     "welcome": {
         "title": "رحلة القرآن",
@@ -93,7 +94,25 @@
         "translation": "الترجمة",
         "mark_as_read": "تحديد كمقروء والمتابعة",
         "signin_prompt": "سجل الدخول لحفظ تقدمك في القراءة وفتح المزيد من الميزات",
-        "mode_mushaf": "صيغة المصحف"
+        "mode_by_verse": "بالآية",
+        "mode_by_page": "بالصفحة",
+        "mode_mushaf": "صيغة المصحف",
+        "verse": "آية",
+        "select_surah": "اختر سورة",
+        "loading_verses": "تحميل الآيات...",
+        "error_loading": "خطأ في التحميل",
+        "retry": "إعادة المحاولة",
+        "complete_reading": "القراءة الكاملة",
+        "loading_more": "تحميل المزيد من الآيات...",
+        "next_surah": "الانتقال إلى السورة التالية",
+        "completed": "مكتمل ✓",
+        "select_passage": "اختر مقطعاً",
+        "surah": "سورة",
+        "confirm": "تأكيد",
+        "bookmark_added": "تمت إضافة علامة مرجعية",
+        "bookmark_removed": "تمت إزالة علامة مرجعية",
+        "bookmarks": "علامات مرجعية",
+        "no_bookmarks": "لا توجد علامات مرجعية"
     },
     "profile": {
         "title": "الملف الشخصي",
@@ -143,6 +162,15 @@
         "great_job_text": "ممتاز! استمر!",
         "correct_answer_was": "الإجابة الصحيحة كانت: {{answer}}",
         "next": "التالي",
-        "see_results": "عرض النتائج"
-    }
+        "see_results": "عرض النتائج"    },
+    "sourate_completion": {
+        "congratulations": "مبروك!",
+        "completed_sourate": "لقد أكملت السورة {{number}}: {{name}}",
+        "test_learning": "هل تريد اختبار تعلمك؟",
+        "start_quiz": "بدء الاختبار",
+        "skip": "تخطي",
+        "skip_to": "الانتقال إلى",
+        "continue_to_next": "الانتقال إلى السورة التالية",
+        "redo_sourate": "إعادة هذه السورة",
+        "stay_in_quiz": "مواصلة الاختبارات"    }
 }

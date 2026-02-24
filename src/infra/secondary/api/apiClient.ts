@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import { AuthStorage } from '../storage/AuthStorage';
 
 const PRODUCTION_API_URL = 'https://api-alpha-opal.vercel.app';
 
@@ -49,13 +50,20 @@ export const apiClient = {
   },
 
   setToken: (token: string | null) => {
+    console.log('[API] setToken appelé, token:', token ? token.substring(0, 20) + '...' : 'null');
     authToken = token;
   },
 
   getHeaders: () => {
     const headers: any = { 'Content-Type': 'application/json' };
-    if (authToken) {
-      headers['Authorization'] = `Bearer ${authToken}`;
+    // Récupérer le token depuis le storage à chaque requête (plus fiable)
+    const token = authToken || AuthStorage.getToken();
+    console.log('[API] getHeaders - authToken:', authToken ? 'présent' : 'null', 'storage token:', AuthStorage.getToken() ? 'présent' : 'null');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+      console.log('[API] Headers avec Authorization Bearer:', token.substring(0, 30) + '...');
+    } else {
+      console.warn('[API] ⚠️ Headers sans Authorization - pas de token disponible');
     }
     return headers;
   },

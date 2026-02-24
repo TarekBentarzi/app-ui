@@ -6,6 +6,7 @@ class ProgressService {
    * Configure le token d'authentification
    */
   setAuthToken(token: string) {
+    console.log('[ProgressService] Configuration token:', token.substring(0, 20) + '...');
     apiClient.setToken(token);
   }
 
@@ -14,13 +15,16 @@ class ProgressService {
    */
   async getUserProgress(userId: string): Promise<UserSave | null> {
     try {
+      console.log('[ProgressService] GET /users/' + userId + '/save');
       const data = await apiClient.get(`/users/${userId}/save`);
+      console.log('[ProgressService] Réponse:', data);
       return data;
     } catch (error: any) {
       if (error.message?.includes('404')) {
+        console.log('[ProgressService] Pas de sauvegarde trouvée (404)');
         return null;
       }
-      console.error('Error fetching user progress:', error);
+      console.error('[ProgressService] Erreur GET progress:', error);
       throw error;
     }
   }
@@ -34,13 +38,15 @@ class ProgressService {
     versetNumero: number
   ): Promise<UserSave> {
     try {
+      console.log('[ProgressService] PUT /users/' + userId + '/save', { sourateNumero, versetNumero });
       const data = await apiClient.put(`/users/${userId}/save`, {
         sourateNumero,
         versetNumero,
       });
+      console.log('[ProgressService] Sauvegarde réussie:', data);
       return data;
     } catch (error) {
-      console.error('Error saving progress:', error);
+      console.error('[ProgressService] Erreur PUT progress:', error);
       throw error;
     }
   }

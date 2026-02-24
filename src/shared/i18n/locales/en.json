@@ -30,7 +30,8 @@
         "next": "Next",
         "previous": "Previous",
         "show": "Show",
-        "hide": "Hide"
+        "hide": "Hide",
+        "what_next": "What would you like to do next?"
     },
     "welcome": {
         "title": "Quran Journey",
@@ -86,20 +87,25 @@
         }
     },
     "reading": {
-    "mode_by_verse": "By Verse",
-    "mode_by_page": "By Page",
-    "verse": "Verse",
-    "select_surah": "Select a surah",
-    "loading_verses": "Loading verses...",
-    "error_loading": "Error loading",
-    "retry": "Retry",
-    "complete_reading": "Complete Reading",
-    "loading_more": "Loading more verses...",
-    "next_surah": "Go to next surah",
-    "select_passage": "Select a passage",
-    "surah": "Surah",
-    "confirm": "Confirm",
-    "mode_mushaf": "Mushaf Format",
+        "mode_by_verse": "By Verse",
+        "mode_by_page": "By Page",
+        "mode_mushaf": "Mushaf Format",
+        "verse": "Verse",
+        "select_surah": "Select a surah",
+        "loading_verses": "Loading verses...",
+        "error_loading": "Error loading",
+        "retry": "Retry",
+        "complete_reading": "Complete Reading",
+        "loading_more": "Loading more verses...",
+        "next_surah": "Go to next surah",
+        "completed": "Completed ✓",
+        "select_passage": "Select a passage",
+        "surah": "Surah",
+        "confirm": "Confirm",
+        "bookmark_added": "Bookmark added",
+        "bookmark_removed": "Bookmark removed",
+        "bookmarks": "Bookmarks",
+        "no_bookmarks": "No bookmarks",
         "title": "Reading",
         "surah_title": "Surah {{number}}: {{name}}",
         "your_progress": "Your Progress",
@@ -156,6 +162,15 @@
         "great_job_text": "Excellent! Keep it up!",
         "correct_answer_was": "The correct answer was: {{answer}}",
         "next": "Next",
-        "see_results": "See Results"
-    }
+        "see_results": "See Results"    },
+    "sourate_completion": {
+        "congratulations": "Congratulations!",
+        "completed_sourate": "You completed Surah {{number}}: {{name}}",
+        "test_learning": "Would you like to test your learning?",
+        "start_quiz": "Start Quiz",
+        "skip": "Skip",
+        "skip_to": "Skip to",
+        "continue_to_next": "Continue to next surah",
+        "redo_sourate": "Redo this surah",
+        "stay_in_quiz": "Continue quizzes"    }
 }
