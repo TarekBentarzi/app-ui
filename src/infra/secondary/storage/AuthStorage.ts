@@ -1,78 +1,119 @@
 import { UserDTO } from '@/application/dto/UserDTO';
+import { UniversalStorage } from './UniversalStorage';
 
 export const AuthStorage = {
-    // Robust check for web environment
-    isBrowser: () => {
-        try {
-            return typeof window !== 'undefined' &&
-                typeof window.localStorage !== 'undefined' &&
-                window.location?.protocol?.startsWith('file:') === false;
-        } catch (e) {
-            return false;
-        }
-    },
-
+    // Méthodes utilitaires génériques (synchrones pour la compatibilité web)
     setItem: (key: string, value: string) => {
-        if (AuthStorage.isBrowser()) {
+        if (typeof window !== 'undefined' && window.localStorage) {
             localStorage.setItem(key, value);
         }
     },
 
     getItem: (key: string): string | null => {
-        if (AuthStorage.isBrowser()) {
-            const value = localStorage.getItem(key);
-            console.log(`[AuthStorage] getItem: ${key}`, value ? 'Found' : 'Not found');
-            return value;
+        if (typeof window !== 'undefined' && window.localStorage) {
+            return localStorage.getItem(key);
         }
         return null;
     },
 
     removeItem: (key: string) => {
-        if (AuthStorage.isBrowser()) {
-            console.log(`[AuthStorage] removeItem: ${key}`);
+        if (typeof window !== 'undefined' && window.localStorage) {
             localStorage.removeItem(key);
         }
     },
 
-    saveUser: (user: any) => {
+    // Méthodes spécifiques pour l'authentification
+    saveUser: async (user: any) => {
         console.log('[AuthStorage] saveUser', user);
-        AuthStorage.setItem('user', JSON.stringify(user));
-    },
-
-    getUser: () => {
-        // Cleanup all possible legacy keys
-        if (AuthStorage.isBrowser()) {
-            ['auth_user', 'auth_token', 'authUser', 'authToken'].forEach(k => {
-                if (localStorage.getItem(k)) {
-                    console.warn(`[AuthStorage] Removing legacy key: ${k}`);
-                    localStorage.removeItem(k);
-                }
-            });
-        }
-
-        const user = AuthStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
-    },
-
-    clearUser: () => {
-        console.log('[AuthStorage] clearUser (Nuclear)');
-        if (AuthStorage.isBrowser()) {
-            localStorage.clear(); // Clear EVERYTHING local for this domain to be sure
-            console.log('[AuthStorage] localStorage cleared completely');
+        try {
+            await UniversalStorage.setItem('user', JSON.stringify(user));
+        } catch (error) {
+            console.error('[AuthStorage] Error saving user:', error);
         }
     },
 
-    saveToken: (token: string) => {
+    getUser: (): UserDTO | null => {
+        try {
+            // Note: We make this synchronous by using a stored value
+            // The actual async loading happens in AuthContext initialization
+            const userStr = typeof window !== 'undefined' && window.localStorage 
+                ? localStorage.getItem('user')
+                : null;
+            
+            if (userStr) {
+                return JSON.parse(userStr);
+            }
+        } catch (error) {
+            console.error('[AuthStorage] Error getting user:', error);
+        }
+        return null;
+    },
+
+    // Async version for proper initialization
+    getUserAsync: async (): Promise<UserDTO | null> => {
+        try {
+            const userStr = await UniversalStorage.getItem('user');
+            if (userStr) {
+                console.log('[AuthStorage] getUserAsync: Found');
+                return JSON.parse(userStr);
+            }
+        } catch (error) {
+            console.error('[AuthStorage] Error getting user async:', error);
+        }
+        console.log('[AuthStorage] getUserAsync: Not found');
+        return null;
+    },
+
+    clearUser: async () => {
+        console.log('[AuthStorage] clearUser');
+        try {
+            await UniversalStorage.removeItem('user');
+            await UniversalStorage.removeItem('token');
+        } catch (error) {
+            console.error('[AuthStorage] Error clearing user:', error);
+        }
+    },
+
+    saveToken: async (token: string) => {
         console.log('[AuthStorage] saveToken');
-        AuthStorage.setItem('token', token);
+        try {
+            await UniversalStorage.setItem('token', token);
+        } catch (error) {
+            console.error('[AuthStorage] Error saving token:', error);
+        }
     },
 
-    getToken: () => {
-        return AuthStorage.getItem('token');
+    getToken: (): string | null => {
+        try {
+            // Synchronous version for immediate access
+            const token = typeof window !== 'undefined' && window.localStorage 
+                ? localStorage.getItem('token')
+                : null;
+            return token;
+        } catch (error) {
+            console.error('[AuthStorage] Error getting token:', error);
+            return null;
+        }
     },
 
-    clearToken: () => {
+    // Async version for proper initialization
+    getTokenAsync: async (): Promise<string | null> => {
+        try {
+            const token = await UniversalStorage.getItem('token');
+            console.log('[AuthStorage] getTokenAsync:', token ? 'Found' : 'Not found');
+            return token;
+        } catch (error) {
+            console.error('[AuthStorage] Error getting token async:', error);
+            return null;
+        }
+    },
+
+    clearToken: async () => {
         console.log('[AuthStorage] clearToken');
-        AuthStorage.removeItem('token');
+        try {
+            await UniversalStorage.removeItem('token');
+        } catch (error) {
+            console.error('[AuthStorage] Error clearing token:', error);
+        }
     },
 };

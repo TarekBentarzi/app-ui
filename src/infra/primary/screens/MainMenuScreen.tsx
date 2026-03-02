@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { BookOpen, Brain, Mic, User, Bell, Lock, Flame, BookMarked } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/shared/contexts/AuthContext';
 import { useUserProgress } from '@/shared/contexts/UserProgressContext';
+import { ReleaseNotesModal } from './components/ReleaseNotesModal';
+import { APP_VERSION, RELEASE_NOTES_1_3_0 } from '@/shared/constants/releaseNotes';
+import { UniversalStorage } from '@/infra/secondary/storage/UniversalStorage';
 
 interface MainMenuScreenProps {
     navigation: any;
@@ -13,11 +16,30 @@ export const MainMenuScreen = ({ navigation }: MainMenuScreenProps) => {
     const { t } = useTranslation();
     const { user } = useAuth();
     const { progress: userProgress } = useUserProgress();
+    const [showReleaseNotes, setShowReleaseNotes] = useState(false);
 
     const isSignedIn = !!user;
 
+    // Check if user has seen release notes for this version
+    useEffect(() => {
+        const checkReleaseNotes = async () => {
+            const lastSeenVersion = await UniversalStorage.getItem('last_seen_version');
+            if (lastSeenVersion !== APP_VERSION) {
+                setShowReleaseNotes(true);
+            }
+        };
+        
+        checkReleaseNotes();
+    }, []);
+
+    const handleCloseReleaseNotes = async () => {
+        setShowReleaseNotes(false);
+        await UniversalStorage.setItem('last_seen_version', APP_VERSION);
+    };
+
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <>
+            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             {/* Header */}
             <View style={styles.header}>
                 <View>
@@ -172,41 +194,22 @@ export const MainMenuScreen = ({ navigation }: MainMenuScreenProps) => {
                 </View>
             </TouchableOpacity>
 
-            {/* Pronunciation - Locked when not signed in */}
+            {/* Pronunciation - Coming Soon (Disabled) */}
             <TouchableOpacity
                 testID="pronunciation-card"
-                style={[styles.sectionCard, !isSignedIn && styles.lockedCard]}
-                onPress={() => isSignedIn ? navigation.navigate('Pronunciation') : navigation.navigate('SignIn')}
-                disabled={!isSignedIn}
+                style={[styles.sectionCard, styles.lockedCard]}
+                disabled={true}
             >
-                <View style={[styles.sectionIcon, isSignedIn ? styles.pronunciationIcon : styles.lockedIcon]}>
-                    {isSignedIn ? (
-                        <Mic color="#2563eb" size={32} />
-                    ) : (
-                        <Lock color="#9ca3af" size={32} />
-                    )}
+                <View style={[styles.sectionIcon, styles.lockedIcon]}>
+                    <Lock color="#9ca3af" size={32} />
                 </View>
                 <View style={styles.sectionContent}>
-                    <Text style={[styles.sectionCardTitle, !isSignedIn && styles.lockedText]}>
+                    <Text style={[styles.sectionCardTitle, styles.lockedText]}>
                         {t('menu.practice_pronunciation.title')}
                     </Text>
-                    <Text style={[styles.sectionDescription, !isSignedIn && styles.lockedText]}>
-                        {isSignedIn ? t('menu.practice_pronunciation.subtitle_unlocked') : t('menu.practice_pronunciation.subtitle_locked')}
+                    <Text style={[styles.sectionDescription, styles.lockedText]}>
+                        {t('menu.practice_pronunciation.coming_soon')}
                     </Text>
-                    {isSignedIn && (
-                        <View style={styles.scoreContainer}>
-                            <View style={styles.progressBarBg}>
-                                <View
-                                    style={[
-                                        styles.progressBarFill,
-                                        styles.pronunciationProgress,
-                                        { width: `${userProgress.pronunciationScore}%` }
-                                    ]}
-                                />
-                            </View>
-                            <Text style={styles.scoreText}>{userProgress.pronunciationScore}%</Text>
-                        </View>
-                    )}
                 </View>
             </TouchableOpacity>
 
@@ -227,6 +230,15 @@ export const MainMenuScreen = ({ navigation }: MainMenuScreenProps) => {
                 </View>
             </TouchableOpacity>
         </ScrollView>
+
+        {/* Release Notes Modal */}
+        <ReleaseNotesModal
+            visible={showReleaseNotes}
+            version={APP_VERSION}
+            notes={RELEASE_NOTES_1_3_0}
+            onClose={handleCloseReleaseNotes}
+        />
+        </>
     );
 };
 

@@ -6,7 +6,6 @@ class ProgressService {
    * Configure le token d'authentification
    */
   setAuthToken(token: string) {
-    console.log('[ProgressService] Configuration token:', token.substring(0, 20) + '...');
     apiClient.setToken(token);
   }
 

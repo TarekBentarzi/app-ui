@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { MainMenuScreen } from '../screens/MainMenuScreen';
 import { ReadingScreen } from '../screens/ReadingScreen';
-import { MemorizingScreen } from '../screens/MemorizingScreen';
+import { MemorizingTabsScreen } from '../screens/MemorizingTabsScreen';
 import { PronunciationScreen } from '../screens/PronunciationScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
@@ -48,7 +48,7 @@ export const AppNavigator = () => {
 
                 <Stack.Screen
                     name="Memorizing"
-                    component={MemorizingScreen}
+                    component={MemorizingTabsScreen}
                 />
 
                 <Stack.Screen

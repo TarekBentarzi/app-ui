@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { AuthStorage } from '@/infra/secondary/storage/AuthStorage';
+import { UniversalStorage } from '@/infra/secondary/storage/UniversalStorage';
 import { useAuth } from './AuthContext';
 
 interface UserProgress {
@@ -34,33 +34,42 @@ export const UserProgressProvider = ({ children }: { children: ReactNode }) => {
 
     // Reset progress in memory when user changes or logs out
     useEffect(() => {
-        if (!user) {
-            console.log('[UserProgressProvider] No user, resetting to default');
-            setProgress(DEFAULT_PROGRESS);
-        } else {
-            // Reload progress when a user logs in
-            const savedProgress = AuthStorage.getItem('user_progress');
-            if (savedProgress) {
-                try {
-                    setProgress(JSON.parse(savedProgress));
-                } catch (e) {
-                    console.error('Failed to parse user progress', e);
+        const loadProgress = async () => {
+            if (!user) {
+                console.log('[UserProgressProvider] No user, resetting to default');
+                setProgress(DEFAULT_PROGRESS);
+            } else {
+                // Reload progress when a user logs in
+                const savedProgress = await UniversalStorage.getItem('user_progress');
+                if (savedProgress) {
+                    try {
+                        setProgress(JSON.parse(savedProgress));
+                    } catch (e) {
+                        console.error('Failed to parse user progress', e);
+                    }
                 }
             }
-        }
+        };
+        
+        loadProgress();
     }, [user]);
 
     const updateProgress = (updates: Partial<UserProgress>) => {
         setProgress(prev => {
             const newProgress = { ...prev, ...updates };
-            AuthStorage.setItem('user_progress', JSON.stringify(newProgress));
+            // Save asynchronously (fire and forget)
+            UniversalStorage.setItem('user_progress', JSON.stringify(newProgress)).catch(err => {
+                console.error('Failed to save user progress', err);
+            });
             return newProgress;
         });
     };
 
     const resetProgress = () => {
         setProgress(DEFAULT_PROGRESS);
-        AuthStorage.removeItem('user_progress');
+        UniversalStorage.removeItem('user_progress').catch(err => {
+            console.error('Failed to remove user progress', err);
+        });
     };
 
     return (

@@ -15,9 +15,10 @@ import { quizService, SourateQuizStats } from '@/infra/secondary/quran';
 
 interface QuizListScreenProps {
   navigation: any;
+  hideHeader?: boolean; // Pour utilisation dans les tabs
 }
 
-export const QuizListScreen = ({ navigation }: QuizListScreenProps) => {
+export const QuizListScreen = ({ navigation, hideHeader = false }: QuizListScreenProps) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { sourates, loading: loadingSourates } = useSourates();
@@ -84,15 +85,17 @@ export const QuizListScreen = ({ navigation }: QuizListScreenProps) => {
   if (quizStats.length === 0) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <ArrowLeft color="#374151" size={20} />
-          </TouchableOpacity>
-          <Text style={styles.title}>{t('quiz.title')}</Text>
-        </View>
+        {!hideHeader && (
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <ArrowLeft color="#374151" size={20} />
+            </TouchableOpacity>
+            <Text style={styles.title}>{t('quiz.title')}</Text>
+          </View>
+        )}
         <View style={styles.centerContainer}>
           <Brain color="#9333ea" size={64} />
           <Text style={styles.emptyTitle}>{t('quiz.no_sourates')}</Text>
@@ -107,32 +110,34 @@ export const QuizListScreen = ({ navigation }: QuizListScreenProps) => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          testID="back-button"
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <ArrowLeft color="#374151" size={20} />
-        </TouchableOpacity>
-        <View style={styles.headerText}>
-          <Text style={styles.title}>{t('quiz.title')}</Text>
-          <Text style={styles.subtitle}>
-            {t('quiz.sourates_count', { count: quizStats.length })}
-          </Text>
+      {!hideHeader && (
+        <View style={styles.header}>
+          <TouchableOpacity
+            testID="back-button"
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <ArrowLeft color="#374151" size={20} />
+          </TouchableOpacity>
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{t('quiz.title')}</Text>
+            <Text style={styles.subtitle}>
+              {t('quiz.sourates_count', { count: quizStats.length })}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={handleRefresh}
+            disabled={refreshing}
+          >
+            <RefreshCw
+              color="#9333ea"
+              size={20}
+              style={refreshing ? styles.spinning : undefined}
+            />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.refreshButton}
-          onPress={handleRefresh}
-          disabled={refreshing}
-        >
-          <RefreshCw
-            color="#9333ea"
-            size={20}
-            style={refreshing ? styles.spinning : undefined}
-          />
-        </TouchableOpacity>
-      </View>
+      )}
 
       <ScrollView style={styles.scrollContent} contentContainerStyle={styles.content}>
         {quizStats.map((stat) => {
@@ -155,11 +160,8 @@ export const QuizListScreen = ({ navigation }: QuizListScreenProps) => {
                   <Text style={styles.sourateBadgeText}>{sourate.numero}</Text>
                 </View>
                 <View style={styles.sourateInfo}>
-                  <Text style={styles.sourateNameArabic}>
-                    {sourate.nomArabe}
-                  </Text>
                   <Text style={styles.sourateNameFrench}>
-                    {sourate.nomTraduction}
+                    {sourate.nomTraduction} ({sourate.nomArabe})
                   </Text>
                 </View>
                 <View style={styles.trophyContainer}>

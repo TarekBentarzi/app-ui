@@ -50,7 +50,6 @@ export const apiClient = {
   },
 
   setToken: (token: string | null) => {
-    console.log('[API] setToken appelé, token:', token ? token.substring(0, 20) + '...' : 'null');
     authToken = token;
   },
 

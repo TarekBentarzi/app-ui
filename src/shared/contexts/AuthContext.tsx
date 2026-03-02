@@ -26,21 +26,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const savedUser = AuthStorage.getUser();
-        const savedToken = AuthStorage.getToken();
-        console.log('[AuthContext] Init', { savedUser, savedToken });
-        if (savedUser && savedToken) {
-            setUser(savedUser);
-            apiClient.setToken(savedToken);
-            // Configurer le token pour tous les services
-            progressService.setAuthToken(savedToken);
-            memorizationService.setAuthToken(savedToken);
-            quizService.setAuthToken(savedToken);
-            console.log('[AuthContext] Token configured for all services');
-        } else if (savedUser || savedToken) {
-            console.warn('[AuthContext] Partial session found, clearing...');
-            AuthStorage.clearUser();
-        }
+        // Initialize user session from storage (async)
+        const initializeSession = async () => {
+            const savedUser = await AuthStorage.getUserAsync();
+            const savedToken = await AuthStorage.getTokenAsync();
+            console.log('[AuthContext] Init', { savedUser, savedToken });
+            if (savedUser && savedToken) {
+                setUser(savedUser);
+                apiClient.setToken(savedToken);
+                // Configurer le token pour tous les services
+                progressService.setAuthToken(savedToken);
+                memorizationService.setAuthToken(savedToken);
+                quizService.setAuthToken(savedToken);
+                console.log('[AuthContext] Token configured for all services');
+            } else if (savedUser || savedToken) {
+                console.warn('[AuthContext] Partial session found, clearing...');
+                await AuthStorage.clearUser();
+            }
+        };
+        
+        initializeSession();
     }, []);
 
     const signIn = useCallback(async (email: string, password: string) => {

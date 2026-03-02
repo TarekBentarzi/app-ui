@@ -83,7 +83,15 @@
         "practice_pronunciation": {
             "title": "النطق (التجويد)",
             "subtitle_locked": "سجل الدخول للفتح",
-            "subtitle_unlocked": "تدرب على النطق الصحيح"
+            "subtitle_unlocked": "تدرب على النطق الصحيح",
+            "coming_soon": "قريبا"
+        }
+    },
+    "memorizing": {
+        "title": "الحفظ",
+        "tabs": {
+            "quiz": "اختبار",
+            "reading": "القراءة والتعلم"
         }
     },
     "reading": {
@@ -112,7 +120,10 @@
         "bookmark_added": "تمت إضافة علامة مرجعية",
         "bookmark_removed": "تمت إزالة علامة مرجعية",
         "bookmarks": "علامات مرجعية",
-        "no_bookmarks": "لا توجد علامات مرجعية"
+        "no_bookmarks": "لا توجد علامات مرجعية",
+        "change_surah": "تغيير السورة",
+        "finish": "إنهاء",
+        "mushaf_loading": "تحميل تنسيق المصحف"
     },
     "profile": {
         "title": "الملف الشخصي",
@@ -172,5 +183,13 @@
         "skip_to": "الانتقال إلى",
         "continue_to_next": "الانتقال إلى السورة التالية",
         "redo_sourate": "إعادة هذه السورة",
-        "stay_in_quiz": "مواصلة الاختبارات"    }
+        "stay_in_quiz": "مواصلة الاختبارات"
+    },
+    "release_notes": {
+        "whats_new": "ما الجديد؟",
+        "features": "ميزات جديدة",
+        "bug_fixes": "إصلاح الأخطاء",
+        "improvements": "تحسينات",
+        "understood": "فهمت!"
+    }
 }

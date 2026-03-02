@@ -83,7 +83,15 @@
         "practice_pronunciation": {
             "title": "Pronunciation (Tajweed)",
             "subtitle_locked": "Sign in to unlock",
-            "subtitle_unlocked": "Practice correct pronunciation"
+            "subtitle_unlocked": "Practice correct pronunciation",
+            "coming_soon": "Coming Soon"
+        }
+    },
+    "memorizing": {
+        "title": "Memorization",
+        "tabs": {
+            "quiz": "Quiz",
+            "reading": "Reading & Learning"
         }
     },
     "reading": {
@@ -106,6 +114,9 @@
         "bookmark_removed": "Bookmark removed",
         "bookmarks": "Bookmarks",
         "no_bookmarks": "No bookmarks",
+        "change_surah": "Change Surah",
+        "finish": "Finish",
+        "mushaf_loading": "Loading Mushaf format",
         "title": "Reading",
         "surah_title": "Surah {{number}}: {{name}}",
         "your_progress": "Your Progress",
@@ -172,5 +183,13 @@
         "skip_to": "Skip to",
         "continue_to_next": "Continue to next surah",
         "redo_sourate": "Redo this surah",
-        "stay_in_quiz": "Continue quizzes"    }
+        "stay_in_quiz": "Continue quizzes"
+    },
+    "release_notes": {
+        "whats_new": "What's New?",
+        "features": "New Features",
+        "bug_fixes": "Bug Fixes",
+        "improvements": "Improvements",
+        "understood": "Got it!"
+    }
 }

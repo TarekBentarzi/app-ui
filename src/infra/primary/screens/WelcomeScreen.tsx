@@ -22,6 +22,9 @@ export const WelcomeScreen = ({ onContinue }: WelcomeScreenProps) => {
                     <View style={styles.logoBox}>
                         <BookOpen color="#059669" size={56} />
                     </View>
+                    <View style={styles.alphaBadge}>
+                        <Text style={styles.alphaText}>Alpha v1.3.0</Text>
+                    </View>
                 </View>
 
                 {/* Title */}
@@ -88,6 +91,7 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         marginBottom: 32,
+        alignItems: 'center',
     },
     logoBox: {
         width: 96,
@@ -101,6 +105,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 16,
         elevation: 8,
+    },
+    alphaBadge: {
+        backgroundColor: '#f59e0b',
+        paddingHorizontal: 16,
+        paddingVertical: 6,
+        borderRadius: 12,
+        marginTop: 12,
+    },
+    alphaText: {
+        color: '#ffffff',
+        fontSize: 14,
+        fontWeight: 'bold',
+        letterSpacing: 1,
     },
     titleContainer: {
         marginBottom: 32,

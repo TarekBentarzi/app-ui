@@ -9,6 +9,7 @@ import { Audio } from 'expo-av';
 import type { Sourate, Verset } from '@/infra/secondary/quran';
 import { VerseCard } from './components/VerseCard';
 import { SourateCompletionModal } from './components/SourateCompletionModal';
+import { SurahProgressBar } from './components/SurahProgressBar';
 import { quizService } from '@/infra/secondary/quran';
 
 interface ReadingScreenProps {
@@ -738,7 +739,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         // Fonction pour obtenir le nom de la sourate d'un verset
         const getSourateName = (sourateNumero: number) => {
             const sourate = souratesForAll.find(s => s.numero === sourateNumero);
-            return sourate ? `${sourate.numero}. ${sourate.nomArabe} - ${sourate.nomTraduction}` : `Sourate ${sourateNumero}`;
+            return sourate ? `${sourate.numero}. ${sourate.nomTraduction} (${sourate.nomArabe})` : `Sourate ${sourateNumero}`;
         };
 
         // Fonction pour savoir si c'est le premier verset d'une sourate
@@ -821,7 +822,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         // Fonction pour obtenir le nom de la sourate d'un verset
         const getSourateName = (sourateNumero: number) => {
             const sourate = souratesForAll.find(s => s.numero === sourateNumero);
-            return sourate ? `${sourate.numero}. ${sourate.nomArabe}` : `${sourateNumero}`;
+            return sourate ? `${sourate.numero}. ${sourate.nomTraduction} (${sourate.nomArabe})` : `${sourateNumero}`;
         };
 
         // Fonction pour savoir si c'est le premier verset d'une sourate
@@ -903,11 +904,11 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                         <Text style={styles.subtitle}>
                             {mode === 'verse' ? (
                                 currentSourate 
-                                    ? `${currentSourate.numero}:${currentVerse} - ${currentSourate.nomTraduction}`
+                                    ? `${currentSourate.numero}:${currentVerse} - ${currentSourate.nomTraduction} (${currentSourate.nomArabe})`
                                     : t('reading.select_surah')
                             ) : (
                                 currentSourate 
-                                    ? `${currentSourate.numero} - ${currentSourate.nomTraduction}`
+                                    ? `${currentSourate.numero} - ${currentSourate.nomTraduction} (${currentSourate.nomArabe})`
                                     : t('reading.select_surah')
                             )}
                         </Text>
@@ -939,6 +940,16 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                     </TouchableOpacity>
                 )}
             </View>
+
+            {/* Progress Bar */}
+            {currentSourate && (
+                <SurahProgressBar
+                    surahName={currentSourate.nomTraduction}
+                    surahNumber={currentSourate.numero}
+                    currentVerse={currentVerse}
+                    totalVerses={mode === 'verse' ? totalVerses : currentSourate.nombreVersets}
+                />
+            )}
 
             {/* Modal de sélection Sourate/Verset */}
             <Modal
