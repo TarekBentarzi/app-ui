@@ -15,9 +15,14 @@ const resources = {
 
 const initI18n = async () => {
     const locale = Localization.getLocales()[0].languageCode ?? 'en';
+    
+    // Forcer le français pour le développement
+    const forcedLocale = 'fr'; // Changez en 'en' ou 'ar' si besoin
+
+    console.log('[i18n] Langue détectée:', locale, '- Langue forcée:', forcedLocale);
 
     // Handle RTL for Arabic
-    const isRTL = locale === 'ar';
+    const isRTL = forcedLocale === 'ar';
     if (I18nManager.isRTL !== isRTL) {
         I18nManager.allowRTL(isRTL);
         I18nManager.forceRTL(isRTL);
@@ -28,7 +33,7 @@ const initI18n = async () => {
         .use(initReactI18next)
         .init({
             resources,
-            lng: locale,
+            lng: forcedLocale, // Utiliser la langue forcée
             fallbackLng: 'en',
             interpolation: {
                 escapeValue: false,

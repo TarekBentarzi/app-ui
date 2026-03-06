@@ -61,6 +61,8 @@ export function useProgress(userId: string | null, mode: ReadingMode = 'verse') 
       const effectiveUserId = userId || 'anonymous';
       const isAnonymous = !userId || userId === 'anonymous';
 
+      console.log(`[useProgress] 💾 SAVE START (${mode}) - user: ${effectiveUserId}, anonymous: ${isAnonymous}, position: ${sourateNumero}:${versetNumero}`);
+
       try {
         setSaving(true);
         setError(null);
