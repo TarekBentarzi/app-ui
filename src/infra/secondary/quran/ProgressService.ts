@@ -44,8 +44,13 @@ class ProgressService {
       });
       console.log('[ProgressService] Sauvegarde réussie:', data);
       return data;
-    } catch (error) {
-      console.error('[ProgressService] Erreur PUT progress:', error);
+    } catch (error: any) {
+      // Ne pas logger les 401 comme erreurs - c'est normal si non connecté ou localhost mobile
+      if (error.message?.includes('401')) {
+        console.log('[ProgressService] API non accessible (401) - sauvegarde locale uniquement');
+      } else {
+        console.error('[ProgressService] Erreur PUT progress:', error);
+      }
       throw error;
     }
   }

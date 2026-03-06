@@ -137,7 +137,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 console.log('[ReadingScreen] ⚠️ No verseProgress, staying at default 1:1');
             }
             setProgressionsLoaded(prev => ({ ...prev, verse: true }));
-            setIsInitialized(true);
             setLastLoadedMode('verse');
         }
     }, [loadingVerse, verseProgress, progressionsLoaded.verse]);
@@ -168,6 +167,14 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             setProgressionsLoaded(prev => ({ ...prev, mushaf: true }));
         }
     }, [loadingMushaf, mushafProgress, progressionsLoaded.mushaf]);
+
+    // Marquer comme initialisé SEULEMENT quand TOUS les modes sont chargés
+    useEffect(() => {
+        if (progressionsLoaded.verse && progressionsLoaded.page && progressionsLoaded.mushaf && !isInitialized) {
+            console.log('[ReadingScreen] ✅ ALL MODES LOADED - Application is now initialized');
+            setIsInitialized(true);
+        }
+    }, [progressionsLoaded.verse, progressionsLoaded.page, progressionsLoaded.mushaf, isInitialized]);
 
     // Sauvegarder immédiatement quand le scroll s'arrête
     const handleScrollEnd = useCallback(() => {
