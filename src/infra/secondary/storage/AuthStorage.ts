@@ -85,9 +85,8 @@ export const AuthStorage = {
     },
 
     saveToken: async (token: string) => {
-        console.log('[AuthStorage] saveToken');
         try {
-            tokenCache = token; // Mettre en cache pour accès synchrone
+            tokenCache = token;
             await UniversalStorage.setItem('token', token);
         } catch (error) {
             console.error('[AuthStorage] Error saving token:', error);
@@ -96,12 +95,9 @@ export const AuthStorage = {
 
     getToken: (): string | null => {
         try {
-            // Sur web, utiliser localStorage
             if (typeof window !== 'undefined' && window.localStorage) {
-                const token = localStorage.getItem('token');
-                return token;
+                return localStorage.getItem('token');
             }
-            // Sur mobile, utiliser le cache en mémoire
             return tokenCache;
         } catch (error) {
             console.error('[AuthStorage] Error getting token:', error);

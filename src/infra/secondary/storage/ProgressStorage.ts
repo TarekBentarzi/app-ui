@@ -31,10 +31,11 @@ export class ProgressStorage {
       };
       
       const key = `${PROGRESS_KEY}:${mode}:${userId}`;
+      console.log(`[ProgressStorage] 💾 SAVING key="${key}" data=`, progress);
       await UniversalStorage.setItem(key, JSON.stringify(progress));
-      console.log(`[ProgressStorage] Sauvegarde locale réussie (${mode}):`, progress);
+      console.log(`[ProgressStorage] ✅ SAVED successfully`);
     } catch (error) {
-      console.error('[ProgressStorage] Erreur sauvegarde locale:', error);
+      console.error('[ProgressStorage] ❌ Erreur sauvegarde locale:', error);
     }
   }
 
@@ -44,18 +45,19 @@ export class ProgressStorage {
   static async getProgress(userId: string, mode: ReadingMode = 'verse'): Promise<LocalProgress | null> {
     try {
       const key = `${PROGRESS_KEY}:${mode}:${userId}`;
+      console.log(`[ProgressStorage] 📖 LOADING key="${key}"`);
       const data = await UniversalStorage.getItem(key);
       
       if (!data) {
-        console.log(`[ProgressStorage] Aucune progression locale trouvée (${mode})`);
+        console.log(`[ProgressStorage] ⚠️ NO DATA FOUND for key="${key}"`);
         return null;
       }
 
       const progress = JSON.parse(data) as LocalProgress;
-      console.log(`[ProgressStorage] Progression locale chargée (${mode}):`, progress);
+      console.log(`[ProgressStorage] ✅ DATA LOADED:`, progress);
       return progress;
     } catch (error) {
-      console.error('[ProgressStorage] Erreur chargement local:', error);
+      console.error('[ProgressStorage] ❌ Erreur chargement local:', error);
       return null;
     }
   }

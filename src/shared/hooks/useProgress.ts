@@ -10,23 +10,20 @@ export function useProgress(userId: string | null, mode: ReadingMode = 'verse') 
   const [saving, setSaving] = useState(false);
 
   const fetchProgress = useCallback(async () => {
-    if (!userId) {
-      console.log('[useProgress] Pas de userId, skip fetch');
-      setLoading(false);
-      return;
-    }
-
+    // Support du mode anonyme (utilisateur non connecté)
+    const effectiveUserId = userId || 'anonymous';
+    
     try {
-      console.log(`[useProgress] Chargement progression pour user: ${userId} (mode: ${mode})`);
+      console.log(`[useProgress] 🔵 FETCH START - user: ${effectiveUserId}, mode: ${mode}`);
       setLoading(true);
       setError(null);
       
       // Charger depuis le localStorage en priorité (par mode)
-      const localProgress = await ProgressStorage.getProgress(userId, mode);
+      const localProgress = await ProgressStorage.getProgress(effectiveUserId, mode);
       if (localProgress) {
-        console.log(`[useProgress] Chargement depuis localStorage (${mode}):`, localProgress);
+        console.log(`[useProgress] ✅ LOCAL DATA FOUND:`, localProgress);
         setProgress({
-          id: 'local-' + userId,
+          id: 'local-' + effectiveUserId,
           userId: localProgress.userId,
           sourateNumero: localProgress.sourateNumero,
           versetNumero: localProgress.versetNumero,
@@ -36,14 +33,20 @@ export function useProgress(userId: string | null, mode: ReadingMode = 'verse') 
         });
         setLoading(false);
         return;
+      } else {
+        console.log(`[useProgress] ⚠️ NO LOCAL DATA for mode: ${mode}`);
       }
       
-      // Si pas dans localStorage, essayer l'API (note: l'API ne gère pas les modes séparés pour l'instant)
-      const data = await progressService.getUserProgress(userId);
-      console.log('[useProgress] Progression chargée depuis API:', data);
-      
-      if (data) {
-        setProgress(data);
+      // Si pas dans localStorage et utilisateur connecté, essayer l'API
+      if (userId && userId !== 'anonymous') {
+        const data = await progressService.getUserProgress(userId);
+        console.log('[useProgress] Progression chargée depuis API:', data);
+        
+        if (data) {
+          setProgress(data);
+        }
+      } else {
+        console.log('[useProgress] Mode anonyme, pas de chargement API');
       }
     } catch (err) {
       console.error('[useProgress] Erreur chargement:', err);
@@ -55,25 +58,21 @@ export function useProgress(userId: string | null, mode: ReadingMode = 'verse') 
 
   const saveProgress = useCallback(
     async (sourateNumero: number, versetNumero: number) => {
-      if (!userId) {
-        console.error('[useProgress] Tentative de sauvegarde sans userId');
-        throw new Error('User ID is required');
-      }
+      const effectiveUserId = userId || 'anonymous';
+      const isAnonymous = !userId || userId === 'anonymous';
 
       try {
-        console.log(`[useProgress] Sauvegarde (${mode}):`, { userId, sourateNumero, versetNumero });
         setSaving(true);
         setError(null);
         
         // TOUJOURS sauvegarder localement d'abord (instantané)
-        await ProgressStorage.saveProgress(userId, sourateNumero, versetNumero, mode);
-        console.log(`[useProgress] ✅ Sauvegarde locale réussie (${mode})`);
+        await ProgressStorage.saveProgress(effectiveUserId, sourateNumero, versetNumero, mode);
         
         // Mettre à jour l'état immédiatement
         const now = new Date().toISOString();
         const localData: UserSave = {
-          id: 'local-' + userId,
-          userId,
+          id: 'local-' + effectiveUserId,
+          userId: effectiveUserId,
           sourateNumero,
           versetNumero,
           lastReadAt: now,
@@ -82,37 +81,33 @@ export function useProgress(userId: string | null, mode: ReadingMode = 'verse') 
         };
         setProgress(localData);
         
-        // Puis essayer de sauvegarder sur l'API (en arrière-plan) SEULEMENT si on a un token
-        const token = AuthStorage.getToken();
-        if (token) {
-          try {
-            const data = await progressService.saveProgress(
-              userId,
-              sourateNumero,
-              versetNumero
-            );
-            console.log('[useProgress] ✅ Sauvegarde API réussie:', data);
-            setProgress(data);
-            return data;
-          } catch (apiError: any) {
-            // Si erreur 401, c'est juste que le token est expiré - pas besoin de warning
-            const is401 = apiError?.message?.includes('401');
-            if (is401) {
-              console.log('[useProgress] ℹ️ Token expiré, sauvegarde locale uniquement');
-              // Nettoyer le token invalide
-              await AuthStorage.clearToken();
-            } else {
-              console.warn('[useProgress] ⚠️ Sauvegarde API échouée (local OK):', apiError);
+        // Sauvegarder sur l'API SEULEMENT si utilisateur connecté (pas anonyme)
+        if (!isAnonymous) {
+          const token = AuthStorage.getToken();
+          if (token) {
+            try {
+              const data = await progressService.saveProgress(
+                effectiveUserId,
+                sourateNumero,
+                versetNumero
+              );
+              setProgress(data);
+              return data;
+            } catch (apiError: any) {
+              const is401 = apiError?.message?.includes('401');
+              if (is401) {
+                await AuthStorage.clearToken();
+              }
+              return localData;
             }
-            // Pas grave, on a déjà sauvegardé localement
+          } else {
             return localData;
           }
         } else {
-          console.log('[useProgress] ℹ️ Pas de token, sauvegarde locale uniquement');
           return localData;
         }
       } catch (err) {
-        console.error('[useProgress] ❌ Erreur sauvegarde:', err);
+        console.error('[useProgress] Erreur sauvegarde:', err);
         setError(err as Error);
         throw err;
       } finally {

@@ -25,10 +25,13 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const { user } = useAuth();
     const { progress: localProgress, updateProgress } = useUserProgress();
     
+    // Utiliser un ID anonyme si pas connecté pour permettre la sauvegarde locale
+    const effectiveUserId = user?.id || 'anonymous';
+    
     // 3 hooks de progression séparés pour chaque mode
-    const { progress: verseProgress, loading: loadingVerse, saveProgress: saveVerseProgress } = useProgress(user?.id || null, 'verse');
-    const { progress: pageProgress, loading: loadingPage, saveProgress: savePageProgress } = useProgress(user?.id || null, 'page');
-    const { progress: mushafProgress, loading: loadingMushaf, saveProgress: saveMushafProgress } = useProgress(user?.id || null, 'mushaf');
+    const { progress: verseProgress, loading: loadingVerse, saveProgress: saveVerseProgress } = useProgress(effectiveUserId, 'verse');
+    const { progress: pageProgress, loading: loadingPage, saveProgress: savePageProgress } = useProgress(effectiveUserId, 'page');
+    const { progress: mushafProgress, loading: loadingMushaf, saveProgress: saveMushafProgress } = useProgress(effectiveUserId, 'mushaf');
     
     const { isBookmarked, toggleBookmark } = useBookmarks(user?.id || null);
     const isSignedIn = !!user;
@@ -109,18 +112,29 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     // Déterminer la progression actuelle selon le mode
     const currentProgress = mode === 'verse' ? verseProgress : mode === 'page' ? pageProgress : mushafProgress;
     const currentLoading = mode === 'verse' ? loadingVerse : mode === 'page' ? loadingPage : loadingMushaf;
-    const currentSaveProgress = mode === 'verse' ? saveVerseProgress : mode === 'page' ? savePageProgress : saveMushafProgress;
+    
+    // Fonction stable pour sauvegarder selon le mode actuel
+    const currentSaveProgress = useCallback(async (sourate: number, verset: number) => {
+        if (mode === 'verse') {
+            return saveVerseProgress(sourate, verset);
+        } else if (mode === 'page') {
+            return savePageProgress(sourate, verset);
+        } else {
+            return saveMushafProgress(sourate, verset);
+        }
+    }, [mode, saveVerseProgress, savePageProgress, saveMushafProgress]);
 
     // Charger la position sauvegardée pour le mode verse au démarrage (UNE SEULE FOIS)
     useEffect(() => {
         if (!loadingVerse && !progressionsLoaded.verse) {
+            console.log('[ReadingScreen] 🔵 INIT VERSE - verseProgress:', verseProgress);
             if (verseProgress) {
-                console.log('[ReadingScreen] Chargement position verse:', verseProgress);
+                console.log(`[ReadingScreen] ✅ Setting verse position to ${verseProgress.sourateNumero}:${verseProgress.versetNumero}`);
                 setVersePosition({ sourate: verseProgress.sourateNumero, verset: verseProgress.versetNumero });
                 setTempSelectedSurah(verseProgress.sourateNumero);
                 setTempSelectedVerse(verseProgress.versetNumero);
             } else {
-                console.log('[ReadingScreen] Pas de sauvegarde verse, valeurs par défaut');
+                console.log('[ReadingScreen] ⚠️ No verseProgress, staying at default 1:1');
             }
             setProgressionsLoaded(prev => ({ ...prev, verse: true }));
             setIsInitialized(true);
@@ -131,9 +145,12 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     // Charger les progressions des autres modes (UNE SEULE FOIS)
     useEffect(() => {
         if (!loadingPage && !progressionsLoaded.page) {
+            console.log('[ReadingScreen] 🔵 INIT PAGE - pageProgress:', pageProgress);
             if (pageProgress) {
-                console.log('[ReadingScreen] Chargement position page:', pageProgress);
+                console.log(`[ReadingScreen] ✅ Setting page position to ${pageProgress.sourateNumero}:${pageProgress.versetNumero}`);
                 setPagePosition({ sourate: pageProgress.sourateNumero, verset: pageProgress.versetNumero });
+            } else {
+                console.log('[ReadingScreen] ⚠️ No pageProgress, staying at default 1:1');
             }
             setProgressionsLoaded(prev => ({ ...prev, page: true }));
         }
@@ -141,9 +158,12 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
 
     useEffect(() => {
         if (!loadingMushaf && !progressionsLoaded.mushaf) {
+            console.log('[ReadingScreen] 🔵 INIT MUSHAF - mushafProgress:', mushafProgress);
             if (mushafProgress) {
-                console.log('[ReadingScreen] Chargement position mushaf:', mushafProgress);
+                console.log(`[ReadingScreen] ✅ Setting mushaf position to ${mushafProgress.sourateNumero}:${mushafProgress.versetNumero}`);
                 setMushafPosition({ sourate: mushafProgress.sourateNumero, verset: mushafProgress.versetNumero });
+            } else {
+                console.log('[ReadingScreen] ⚠️ No mushafProgress, staying at default 1:1');
             }
             setProgressionsLoaded(prev => ({ ...prev, mushaf: true }));
         }
@@ -151,37 +171,31 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
 
     // Sauvegarder immédiatement quand le scroll s'arrête
     const handleScrollEnd = useCallback(() => {
-        if (!user || mode === 'verse') return;
+        if (mode === 'verse') return;
 
-        // Vérifier si la position a changé pour éviter les sauvegardes inutiles
         if (lastSavedPositionRef.current.sourate === selectedSurah && 
             lastSavedPositionRef.current.verset === currentVerse) {
             return;
         }
 
-        // Sauvegarder immédiatement
         currentSaveProgress(selectedSurah, currentVerse)
             .then(() => {
                 lastSavedPositionRef.current = { sourate: selectedSurah, verset: currentVerse };
-                console.log(`[ReadingScreen] 💾 Sauvegarde immédiate: ${selectedSurah}:${currentVerse}`);
             })
             .catch((error) => {
-                console.error(`[ReadingScreen] Erreur sauvegarde immédiate (${mode}):`, error);
+                console.error('[ReadingScreen] Erreur sauvegarde scroll:', error);
             });
-    }, [user, mode, selectedSurah, currentVerse, currentSaveProgress]);
+    }, [mode, selectedSurah, currentVerse, currentSaveProgress]);
 
     // Sauvegarder automatiquement avec un petit debounce (backup)
     useEffect(() => {
-        if (!user || !isInitialized) return;
+        if (!isInitialized) return;
 
-        // Nettoyer le timer précédent
         if (saveTimerRef.current) {
             clearTimeout(saveTimerRef.current);
         }
 
-        // Créer un nouveau timer (petit debounce de 200ms comme backup)
         saveTimerRef.current = setTimeout(() => {
-            // Vérifier si on a déjà sauvegardé cette position
             if (lastSavedPositionRef.current.sourate === selectedSurah && 
                 lastSavedPositionRef.current.verset === currentVerse) {
                 return;
@@ -192,17 +206,16 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                     lastSavedPositionRef.current = { sourate: selectedSurah, verset: currentVerse };
                 })
                 .catch((error) => {
-                    console.error(`[ReadingScreen] Erreur sauvegarde (${mode}):`, error);
+                    console.error('[ReadingScreen] Erreur sauvegarde auto:', error);
                 });
-        }, 200); // 200ms de debounce comme backup
+        }, 200);
 
-        // Cleanup
         return () => {
             if (saveTimerRef.current) {
                 clearTimeout(saveTimerRef.current);
             }
         };
-    }, [selectedSurah, currentVerse, user, isInitialized, currentSaveProgress, mode]);
+    }, [selectedSurah, currentVerse, isInitialized, currentSaveProgress, mode]);
 
     useEffect(() => {
         return sound
@@ -252,11 +265,9 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 currentVerse: nextVerse,
                 versesRead: Math.max(localProgress.versesRead, nextVerse),
             });
-            if (user) {
-                currentSaveProgress(selectedSurah, nextVerse).catch((error) => {
-                    console.error('[ReadingScreen] Erreur sauvegarde navigation:', error);
-                });
-            }
+            currentSaveProgress(selectedSurah, nextVerse).catch((error) => {
+                console.error('[ReadingScreen] Erreur sauvegarde navigation:', error);
+            });
         }
     };
 
@@ -269,11 +280,9 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 currentVerse: prevVerse,
                 versesRead: localProgress.versesRead,
             });
-            if (user) {
-                currentSaveProgress(selectedSurah, prevVerse).catch((error) => {
-                    console.error('[ReadingScreen] Erreur sauvegarde navigation:', error);
-                });
-            }
+            currentSaveProgress(selectedSurah, prevVerse).catch((error) => {
+                console.error('[ReadingScreen] Erreur sauvegarde navigation:', error);
+            });
         }
     };
 
@@ -287,12 +296,10 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 currentVerse: nextVerse,
                 versesRead: Math.max(localProgress.versesRead, currentVerse),
             });
-            // Sauvegarder immédiatement sur le serveur
-            if (user) {
-                currentSaveProgress(selectedSurah, nextVerse).catch((error) => {
-                    console.error('[ReadingScreen] Erreur sauvegarde verset:', error);
-                });
-            }
+            // Sauvegarder immédiatement
+            currentSaveProgress(selectedSurah, nextVerse).catch((error) => {
+                console.error('[ReadingScreen] Erreur sauvegarde verset:', error);
+            });
         } else if (selectedSurah < 114) {
             // Dernier verset de la sourate, passer à la sourate suivante
             console.log('[ReadingScreen] Sourate terminée, déblocage pour quiz:', selectedSurah);
@@ -333,12 +340,10 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             currentVerse: 1,
             versesRead: localProgress.versesRead + 1,
         });
-        // Sauvegarder immédiatement sur le serveur
-        if (user) {
-            currentSaveProgress(nextSurah, 1).catch((error) => {
-                console.error('[ReadingScreen] Erreur sauvegarde sourate suivante:', error);
-            });
-        }
+        // Sauvegarder immédiatement
+        currentSaveProgress(nextSurah, 1).catch((error) => {
+            console.error('[ReadingScreen] Erreur sauvegarde sourate suivante:', error);
+        });
     };
 
     const handleStartQuiz = () => {
@@ -395,11 +400,9 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             const nextSourate = selectedSurah + 1;
             updateSourate(nextSourate);
             updateVerset(1); // Recommencer au verset 1
-            if (user) {
-                currentSaveProgress(nextSourate, 1).catch((error) => {
-                    console.error('[ReadingScreen] Erreur sauvegarde navigation sourate:', error);
-                });
-            }
+            currentSaveProgress(nextSourate, 1).catch((error) => {
+                console.error('[ReadingScreen] Erreur sauvegarde navigation sourate:', error);
+            });
         }
     };
 
@@ -408,11 +411,9 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             const prevSourate = selectedSurah - 1;
             updateSourate(prevSourate);  
             updateVerset(1); // Commencer au verset 1
-            if (user) {
-                currentSaveProgress(prevSourate, 1).catch((error) => {
-                    console.error('[ReadingScreen] Erreur sauvegarde navigation sourate:', error);
-                });
-            }
+            currentSaveProgress(prevSourate, 1).catch((error) => {
+                console.error('[ReadingScreen] Erreur sauvegarde navigation sourate:', error);
+            });
         }
     };
 
@@ -453,12 +454,12 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         }
     }, [mode, currentVerse, updateVerset]);
 
-    // Réinitialiser les positions des versets quand on change de sourate
+    // Réinitialiser les positions des versets quand on change de sourate DANS LE MODE ACTUEL
     useEffect(() => {
         versetPositionsRef.current.clear();
-        // Réinitialiser le flag de scroll initial pour cette sourate
-        hasInitiallyScrolledRef.current = { verse: false, page: false, mushaf: false };
-    }, [selectedSurah]);
+        const modeKey = mode as keyof typeof hasInitiallyScrolledRef.current;
+        hasInitiallyScrolledRef.current[modeKey] = false;
+    }, [selectedSurah, mode]);
 
     // Scroller vers la position sauvegardée UNE SEULE FOIS au chargement initial pour chaque mode
     useEffect(() => {
