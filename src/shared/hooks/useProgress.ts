@@ -94,8 +94,16 @@ export function useProgress(userId: string | null, mode: ReadingMode = 'verse') 
             console.log('[useProgress] ✅ Sauvegarde API réussie:', data);
             setProgress(data);
             return data;
-          } catch (apiError) {
-            console.warn('[useProgress] ⚠️ Sauvegarde API échouée (local OK):', apiError);
+          } catch (apiError: any) {
+            // Si erreur 401, c'est juste que le token est expiré - pas besoin de warning
+            const is401 = apiError?.message?.includes('401');
+            if (is401) {
+              console.log('[useProgress] ℹ️ Token expiré, sauvegarde locale uniquement');
+              // Nettoyer le token invalide
+              await AuthStorage.clearToken();
+            } else {
+              console.warn('[useProgress] ⚠️ Sauvegarde API échouée (local OK):', apiError);
+            }
             // Pas grave, on a déjà sauvegardé localement
             return localData;
           }

@@ -10,6 +10,7 @@ import { progressService, memorizationService, quizService } from '@/infra/secon
 interface AuthContextType {
     user: UserDTO | null;
     loading: boolean;
+    isInitializing: boolean;
     signIn: (email: string, password: string) => Promise<UserDTO>;
     signUp: (data: CreateUserInput & { password: string }) => Promise<UserDTO>;
     signOut: () => void;
@@ -24,24 +25,32 @@ const userService = new UserApplicationService(userRepository);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<UserDTO | null>(null);
     const [loading, setLoading] = useState(false);
+    const [isInitializing, setIsInitializing] = useState(true);
 
     useEffect(() => {
         // Initialize user session from storage (async)
         const initializeSession = async () => {
-            const savedUser = await AuthStorage.getUserAsync();
-            const savedToken = await AuthStorage.getTokenAsync();
-            console.log('[AuthContext] Init', { savedUser, savedToken });
-            if (savedUser && savedToken) {
-                setUser(savedUser);
-                apiClient.setToken(savedToken);
-                // Configurer le token pour tous les services
-                progressService.setAuthToken(savedToken);
-                memorizationService.setAuthToken(savedToken);
-                quizService.setAuthToken(savedToken);
-                console.log('[AuthContext] Token configured for all services');
-            } else if (savedUser || savedToken) {
-                console.warn('[AuthContext] Partial session found, clearing...');
-                await AuthStorage.clearUser();
+            try {
+                const savedUser = await AuthStorage.getUserAsync();
+                const savedToken = await AuthStorage.getTokenAsync();
+                console.log('[AuthContext] Init', { savedUser: !!savedUser, savedToken: !!savedToken });
+                if (savedUser && savedToken) {
+                    setUser(savedUser);
+                    apiClient.setToken(savedToken);
+                    // Configurer le token pour tous les services
+                    progressService.setAuthToken(savedToken);
+                    memorizationService.setAuthToken(savedToken);
+                    quizService.setAuthToken(savedToken);
+                    console.log('[AuthContext] Token configured for all services');
+                } else if (savedUser || savedToken) {
+                    console.warn('[AuthContext] Partial session found, clearing...');
+                    await AuthStorage.clearUser();
+                }
+            } catch (error) {
+                console.error('[AuthContext] Initialization error:', error);
+            } finally {
+                setIsInitializing(false);
+                console.log('[AuthContext] Initialization complete');
             }
         };
         
@@ -111,7 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ user, loading, isInitializing, signIn, signUp, signOut }}>
             {children}
         </AuthContext.Provider>
     );

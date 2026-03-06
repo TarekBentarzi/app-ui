@@ -4,13 +4,15 @@ import { ArrowLeft, BookmarkPlus, Bookmark, Volume2, ChevronLeft, ChevronRight, 
 import { useAuth } from '@/shared/contexts/AuthContext';
 import { useUserProgress } from '@/shared/contexts/UserProgressContext';
 import { useTranslation } from 'react-i18next';
-import { useSourates, useVersets, useAllVersets, useProgress, useBookmarks } from '@/shared/hooks';
+import { useSourates, useVersets, useProgress, useBookmarks } from '@/shared/hooks';
 import { Audio } from 'expo-av';
 import type { Sourate, Verset } from '@/infra/secondary/quran';
 import { VerseCard } from './components/VerseCard';
 import { SourateCompletionModal } from './components/SourateCompletionModal';
 import { SurahProgressBar } from './components/SurahProgressBar';
+import { QuranProgressBar } from './components/QuranProgressBar';
 import { quizService } from '@/infra/secondary/quran';
+import { getSurahNameFr } from '@/shared/constants/surahNames';
 
 interface ReadingScreenProps {
     navigation: any;
@@ -51,67 +53,27 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const [tempSelectedSurah, setTempSelectedSurah] = useState(1);
     const [tempSelectedVerse, setTempSelectedVerse] = useState(1);
     const [isInitialized, setIsInitialized] = useState(false);
-    const [hasScrolledInitially, setHasScrolledInitially] = useState(false);
     const [lastLoadedMode, setLastLoadedMode] = useState<ReadingMode | null>(null);
     const [progressionsLoaded, setProgressionsLoaded] = useState({ verse: false, page: false, mushaf: false });
-    const [isJumpingToSourate, setIsJumpingToSourate] = useState(false);
-    const [isCurrentVerseBookmarked, setIsCurrentVerseBookmarked] = useState(false);
-    
-    // Références pour les FlatLists (page et mushaf)
-    const flatListRef = useRef<FlatList>(null);
-    const viewableItemsRef = useRef<string[]>([]);
-    const isRepositioningRef = useRef(false);
-    const hasScrolledInitiallyRef = useRef(false);
-    const modeRef = useRef<ReadingMode>(mode);
-    const userRef = useRef(user);
     
     // Timer de sauvegarde automatique (debounce)
     const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
     
-    // Hook pour le mode "Par Verset" (une sourate à la fois)
-    const { sourates, loading: loadingSourates } = useSourates();
-    const { versets: versetsOneSurah, loading: loadingVersets, error } = useVersets(selectedSurah);
+    // Tracker les positions des versets pour la sauvegarde automatique au scroll
+    const versetPositionsRef = useRef<Map<number, number>>(new Map());
+    const scrollViewRef = useRef<ScrollView>(null);
     
-    // Hook pour le mode "Par Page" (tout le Coran)
-    const { 
-        versets: allVersets, 
-        loading: loadingAllVersets, 
-        loadingMore,
-        hasMore,
-        loadMore,
-        sourates: souratesForAll 
-    } = useAllVersets();
+    // Flag pour éviter le scroll automatique pendant qu'on scrolle manuellement
+    const isAutoScrollingRef = useRef(false);
+    const hasInitiallyScrolledRef = useRef({ verse: false, page: false, mushaf: false });
+    const lastSavedPositionRef = useRef({ sourate: 0, verset: 0 });
+    
+    // Charger une sourate à la fois pour tous les modes
+    const { sourates, loading: loadingSourates } = useSourates();
+    const { versets, loading: loadingVersets, error } = useVersets(selectedSurah);
     
     const currentSourate = sourates.find(s => s.numero === selectedSurah);
     const tempSourate = sourates.find(s => s.numero === tempSelectedSurah);
-    const versesPerPage = 5; // Nombre de versets par page en mode "Par Page"
-
-    // Synchroniser les refs avec les states
-    useEffect(() => {
-        hasScrolledInitiallyRef.current = hasScrolledInitially;
-    }, [hasScrolledInitially]);
-
-    useEffect(() => {
-        modeRef.current = mode;
-    }, [mode]);
-
-    useEffect(() => {
-        userRef.current = user;
-    }, [user]);
-
-    // Vérifier si le verset actuel est bookmarked
-    useEffect(() => {
-        const checkBookmarkStatus = async () => {
-            if (user && (mode === 'page' || mode === 'mushaf')) {
-                const bookmarked = await isBookmarked(selectedSurah, currentVerse);
-                setIsCurrentVerseBookmarked(bookmarked);
-            } else {
-                setIsCurrentVerseBookmarked(false);
-            }
-        };
-        
-        checkBookmarkStatus();
-    }, [user, mode, selectedSurah, currentVerse, isBookmarked]);
 
     // Fonctions helper pour mettre à jour la position selon le mode actif
     const updatePosition = (sourate: number, verset: number) => {
@@ -187,109 +149,28 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         }
     }, [loadingMushaf, mushafProgress, progressionsLoaded.mushaf]);
 
-    // getItemLayout pour un scroll précis dans les FlatLists
-    const getItemLayout = (_: any, index: number) => ({
-        length: 200, // Hauteur estimée moyenne d'un verset
-        offset: 200 * index,
-        index,
-    });
+    // Sauvegarder immédiatement quand le scroll s'arrête
+    const handleScrollEnd = useCallback(() => {
+        if (!user || mode === 'verse') return;
 
-    // Scroll initial vers la position sauvegardée (au montage)
-    useEffect(() => {
-        if ((mode === 'page' || mode === 'mushaf') && allVersets.length > 0 && !hasScrolledInitially && flatListRef.current) {
-            const currentPos = mode === 'page' ? pagePosition : mushafPosition;
-            
-            // Calculer l'index du verset
-            const estimatedIndex = calculateVersetsBeforeSourate(currentPos.sourate) + currentPos.verset - 1;
-            
-            console.log(`[ReadingScreen] Chargement initial ${mode} vers sourate ${currentPos.sourate}`);
-            
-            // Afficher le loader pour les sourates éloignées
-            if (estimatedIndex > 100) {
-                setIsJumpingToSourate(true);
-            }
-            
-            const timer = setTimeout(() => {
-                try {
-                    flatListRef.current?.scrollToIndex({ 
-                        index: estimatedIndex, 
-                        animated: false,
-                        viewPosition: 0.1
-                    });
-                } catch (error) {
-                    console.warn('[ReadingScreen] Erreur scroll initial:', error);
-                }
-                setHasScrolledInitially(true);
-                // Cacher le loader après le scroll
-                setTimeout(() => setIsJumpingToSourate(false), 1000);
-            }, 300);
-            
-            return () => clearTimeout(timer);
+        // Vérifier si la position a changé pour éviter les sauvegardes inutiles
+        if (lastSavedPositionRef.current.sourate === selectedSurah && 
+            lastSavedPositionRef.current.verset === currentVerse) {
+            return;
         }
-    }, [mode, allVersets.length, hasScrolledInitially, pagePosition, mushafPosition]);
 
-    // Fonction helper pour calculer le nombre de versets avant une sourate
-    const calculateVersetsBeforeSourate = (sourateNumero: number): number => {
-        // Nombre de versets par sourate (tableau complet du Coran)
-        const versetsPerSourate: { [key: number]: number } = {
-            1: 7, 2: 286, 3: 200, 4: 176, 5: 120, 6: 165, 7: 206, 8: 75, 9: 129, 10: 109,
-            11: 123, 12: 111, 13: 43, 14: 52, 15: 99, 16: 128, 17: 111, 18: 110, 19: 98, 20: 135,
-            21: 112, 22: 78, 23: 118, 24: 64, 25: 77, 26: 227, 27: 93, 28: 88, 29: 69, 30: 60,
-            31: 34, 32: 30, 33: 73, 34: 54, 35: 45, 36: 83, 37: 182, 38: 88, 39: 75, 40: 85,
-            41: 54, 42: 53, 43: 89, 44: 59, 45: 37, 46: 35, 47: 38, 48: 29, 49: 18, 50: 45,
-            51: 60, 52: 49, 53: 62, 54: 55, 55: 78, 56: 96, 57: 29, 58: 22, 59: 24, 60: 13,
-            61: 14, 62: 11, 63: 11, 64: 18, 65: 12, 66: 12, 67: 30, 68: 52, 69: 52, 70: 44,
-            71: 28, 72: 28, 73: 20, 74: 56, 75: 40, 76: 31, 77: 50, 78: 40, 79: 46, 80: 42,
-            81: 29, 82: 19, 83: 36, 84: 25, 85: 22, 86: 17, 87: 19, 88: 26, 89: 30, 90: 20,
-            91: 15, 92: 21, 93: 11, 94: 8, 95: 8, 96: 19, 97: 5, 98: 8, 99: 8, 100: 11,
-            101: 11, 102: 8, 103: 3, 104: 9, 105: 5, 106: 4, 107: 7, 108: 3, 109: 6, 110: 3,
-            111: 5, 112: 4, 113: 5, 114: 6
-        };
-        
-        let total = 0;
-        for (let i = 1; i < sourateNumero; i++) {
-            total += versetsPerSourate[i] || 0;
-        }
-        return total;
-    };
+        // Sauvegarder immédiatement
+        currentSaveProgress(selectedSurah, currentVerse)
+            .then(() => {
+                lastSavedPositionRef.current = { sourate: selectedSurah, verset: currentVerse };
+                console.log(`[ReadingScreen] 💾 Sauvegarde immédiate: ${selectedSurah}:${currentVerse}`);
+            })
+            .catch((error) => {
+                console.error(`[ReadingScreen] Erreur sauvegarde immédiate (${mode}):`, error);
+            });
+    }, [user, mode, selectedSurah, currentVerse, currentSaveProgress]);
 
-    // Gérer le changement de mode : scroll vers la position du nouveau mode
-    useEffect(() => {
-        // Ne rien faire si on est au démarrage ou si le mode n'a pas changé
-        if (!isInitialized || !lastLoadedMode || lastLoadedMode === mode) return;
-        
-        console.log(`[ReadingScreen] Changement de mode de ${lastLoadedMode} vers ${mode}`);
-        setLastLoadedMode(mode);
-        
-        // Pour page/mushaf, scroller vers la position sauvegardée
-        if ((mode === 'page' || mode === 'mushaf') && allVersets.length > 0 && hasScrolledInitially) {
-            const modePos = mode === 'page' ? pagePosition : mushafPosition;
-            const estimatedIndex = calculateVersetsBeforeSourate(modePos.sourate) + modePos.verset - 1;
-            
-            console.log(`[ReadingScreen] Saut vers sourate ${modePos.sourate}`);
-            
-            // Afficher le loader pour les sauts de plus de 50 versets
-            if (Math.abs(estimatedIndex - (flatListRef.current as any)?._listRef?._scrollMetrics?.offset / 200) > 50) {
-                setIsJumpingToSourate(true);
-            }
-            
-            isRepositioningRef.current = true;
-            
-            setTimeout(() => {
-                flatListRef.current?.scrollToIndex({ 
-                    index: estimatedIndex, 
-                    animated: false,
-                    viewPosition: 0.1
-                });
-                setTimeout(() => {
-                    isRepositioningRef.current = false;
-                    setIsJumpingToSourate(false);
-                }, 1000);
-            }, 100);
-        }
-    }, [mode, isInitialized, lastLoadedMode, allVersets.length, hasScrolledInitially, pagePosition, mushafPosition]);
-
-    // Sauvegarder automatiquement la position avec debounce (2 secondes après le dernier changement)
+    // Sauvegarder automatiquement avec un petit debounce (backup)
     useEffect(() => {
         if (!user || !isInitialized) return;
 
@@ -298,17 +179,22 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             clearTimeout(saveTimerRef.current);
         }
 
-        // Créer un nouveau timer
+        // Créer un nouveau timer (petit debounce de 200ms comme backup)
         saveTimerRef.current = setTimeout(() => {
-            // Logs supprimés pour performance (appelé toutes les 2 secondes)
+            // Vérifier si on a déjà sauvegardé cette position
+            if (lastSavedPositionRef.current.sourate === selectedSurah && 
+                lastSavedPositionRef.current.verset === currentVerse) {
+                return;
+            }
+
             currentSaveProgress(selectedSurah, currentVerse)
                 .then(() => {
-                    // Sauvegarde réussie
+                    lastSavedPositionRef.current = { sourate: selectedSurah, verset: currentVerse };
                 })
                 .catch((error) => {
                     console.error(`[ReadingScreen] Erreur sauvegarde (${mode}):`, error);
                 });
-        }, 2000); // 2 secondes de debounce
+        }, 200); // 200ms de debounce comme backup
 
         // Cleanup
         return () => {
@@ -326,49 +212,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             : undefined;
     }, [sound]);
 
-    // Handler pour détecter les versets visibles (page/mushaf)
-    const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
-        // Ne mettre à jour que si on a déjà fait le scroll initial ET qu'on n'est pas en train de repositionner
-        const currentMode = modeRef.current;
-        const currentUser = userRef.current;
-        const currentHasScrolled = hasScrolledInitiallyRef.current;
-        const currentIsRepositioning = isRepositioningRef.current;
-        
-        if (viewableItems.length > 0 && (currentMode === 'page' || currentMode === 'mushaf') && currentUser && currentHasScrolled && !currentIsRepositioning) {
-            const firstVisibleItem = viewableItems[0].item;
-            if (firstVisibleItem) {
-                // Log supprimé pour performance (appelé très fréquemment)
-                // Mettre à jour la position du mode actif
-                if (currentMode === 'page') {
-                    setPagePosition({ sourate: firstVisibleItem.sourateNumero, verset: firstVisibleItem.versetNumero });
-                } else {
-                    setMushafPosition({ sourate: firstVisibleItem.sourateNumero, verset: firstVisibleItem.versetNumero });
-                }
-            }
-        }
-    }).current;
-
-    const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
-
-    // Handler pour gérer les échecs de scrollToIndex (index pas encore rendu)
-    const onScrollToIndexFailed = (info: { index: number; averageItemLength: number }) => {
-        console.log('[ReadingScreen] scrollToIndex échoué, retry avec offset pour index:', info.index);
-        // Faire un scrollToOffset approximatif
-        const offset = info.index * info.averageItemLength;
-        flatListRef.current?.scrollToOffset({ offset, animated: false });
-        // Réessayer scrollToIndex après un court délai pour affiner la position
-        setTimeout(() => {
-            try {
-                flatListRef.current?.scrollToIndex({ index: info.index, animated: false, viewPosition: 0.1 });
-            } catch (error) {
-                // Si ça échoue encore, c'est OK on a au moins scrollé approximativement
-            }
-            // Cacher le loader après le scroll
-            setTimeout(() => setIsJumpingToSourate(false), 500);
-        }, 100);
-    };
-
-    const totalVerses = versetsOneSurah.length;
+    const totalVerses = versets.length;
 
     const handlePlayAudio = async (versetId: string, audioUrl: string | null) => {
         if (!audioUrl) return;
@@ -463,7 +307,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                     if (mode === 'verse') {
                         setCompletedSourate({
                             numero: selectedSurah,
-                            nom: currentSourate?.nomTraduction || '',
+                            nom: getSurahNameFr(selectedSurah),
                         });
                         setShowCompletionModal(true);
                     } else {
@@ -537,33 +381,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             versesRead: localProgress.versesRead,
         });
         
-        // Pour page/mushaf, scroller vers la position sélectionnée
-        if ((mode === 'page' || mode === 'mushaf') && allVersets.length > 0) {
-            const estimatedIndex = calculateVersetsBeforeSourate(tempSelectedSurah) + tempSelectedVerse - 1;
-            
-            console.log(`[ReadingScreen] Saut vers sourate ${tempSelectedSurah}`);
-            
-            // Toujours afficher le loader pour les sélections manuelles
-            setIsJumpingToSourate(true);
-            isRepositioningRef.current = true;
-            
-            setTimeout(() => {
-                try {
-                    flatListRef.current?.scrollToIndex({ 
-                        index: estimatedIndex, 
-                        animated: false,
-                        viewPosition: 0.1
-                    });
-                } catch (error) {
-                    console.warn('[ReadingScreen] Erreur scroll:', error);
-                }
-                setTimeout(() => {
-                    isRepositioningRef.current = false;
-                    setIsJumpingToSourate(false);
-                }, 1000);
-            }, 50);
-        }
-        
         // Sauvegarder immédiatement sur le serveur
         if (user) {
             currentSaveProgress(tempSelectedSurah, tempSelectedVerse).catch((error) => {
@@ -571,6 +388,117 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             });
         }
     };
+
+    // Navigation entre sourates (pour modes page et mushaf)
+    const handleNextSourate = () => {
+        if (selectedSurah < 114) {
+            const nextSourate = selectedSurah + 1;
+            updateSourate(nextSourate);
+            updateVerset(1); // Recommencer au verset 1
+            if (user) {
+                currentSaveProgress(nextSourate, 1).catch((error) => {
+                    console.error('[ReadingScreen] Erreur sauvegarde navigation sourate:', error);
+                });
+            }
+        }
+    };
+
+    const handlePrevSourate = () => {
+        if (selectedSurah > 1) {
+            const prevSourate = selectedSurah - 1;
+            updateSourate(prevSourate);  
+            updateVerset(1); // Commencer au verset 1
+            if (user) {
+                currentSaveProgress(prevSourate, 1).catch((error) => {
+                    console.error('[ReadingScreen] Erreur sauvegarde navigation sourate:', error);
+                });
+            }
+        }
+    };
+
+    // Gestion de la sauvegarde automatique au scroll
+    const handleVersetLayout = useCallback((versetNumero: number, layout: { y: number }) => {
+        versetPositionsRef.current.set(versetNumero, layout.y);
+    }, []);
+
+    const handleScroll = useCallback((event: any) => {
+        // Ne rien faire en mode verse (il utilise la navigation par boutons)
+        if (mode === 'verse') return;
+
+        // Ne rien faire si on est en train de scroller automatiquement
+        if (isAutoScrollingRef.current) return;
+
+        // Attendre que les positions des versets soient calculées
+        if (versetPositionsRef.current.size === 0) return;
+
+        const scrollY = event.nativeEvent.contentOffset.y;
+        const viewportHeight = event.nativeEvent.layoutMeasurement.height;
+        const centerY = scrollY + viewportHeight / 3; // On considère le tiers supérieur de l'écran
+
+        // Trouver le verset le plus proche du centre
+        let closestVerset = currentVerse; // Par défaut: garder le verset actuel
+        let minDistance = Infinity;
+
+        versetPositionsRef.current.forEach((y, versetNumero) => {
+            const distance = Math.abs(y - centerY);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestVerset = versetNumero;
+            }
+        });
+
+        // Mettre à jour le verset actuel (déclenchera la sauvegarde auto via useEffect)
+        if (closestVerset !== currentVerse) {
+            updateVerset(closestVerset);
+        }
+    }, [mode, currentVerse, updateVerset]);
+
+    // Réinitialiser les positions des versets quand on change de sourate
+    useEffect(() => {
+        versetPositionsRef.current.clear();
+        // Réinitialiser le flag de scroll initial pour cette sourate
+        hasInitiallyScrolledRef.current = { verse: false, page: false, mushaf: false };
+    }, [selectedSurah]);
+
+    // Scroller vers la position sauvegardée UNE SEULE FOIS au chargement initial pour chaque mode
+    useEffect(() => {
+        if (mode === 'verse') return; // Mode verse n'utilise pas de scroll continu
+        
+        // Si on a déjà scrollé pour ce mode, ne rien faire
+        const modeKey = mode as keyof typeof hasInitiallyScrolledRef.current;
+        if (hasInitiallyScrolledRef.current[modeKey]) return;
+
+        const timer = setTimeout(() => {
+            if (scrollViewRef.current && currentVerse > 1 && versetPositionsRef.current.size > 0) {
+                // Bloquer handleScroll pendant le scroll automatique
+                isAutoScrollingRef.current = true;
+                
+                // Chercher la position exacte du verset dans la map
+                const targetY = versetPositionsRef.current.get(currentVerse);
+                
+                if (targetY !== undefined) {
+                    // Utiliser la position réelle du verset
+                    scrollViewRef.current.scrollTo({ y: targetY, animated: false });
+                    console.log(`[ReadingScreen] Scroll initial vers verset ${currentVerse} (y: ${targetY})`);
+                } else {
+                    // Fallback: estimation si la position n'est pas encore calculée
+                    const estimatedY = (currentVerse - 1) * 200;
+                    scrollViewRef.current.scrollTo({ y: estimatedY, animated: false });
+                    console.log(`[ReadingScreen] Scroll initial estimé vers verset ${currentVerse} (y: ${estimatedY})`);
+                }
+                
+                // Marquer qu'on a scrollé pour ce mode
+                hasInitiallyScrolledRef.current[modeKey] = true;
+                
+                // Réactiver handleScroll après un délai
+                setTimeout(() => {
+                    isAutoScrollingRef.current = false;
+                }, 500);
+            }
+        }, 300); // Délai plus long pour laisser le temps aux versets de se positionner
+
+        return () => clearTimeout(timer);
+    }, [mode, currentVerse, versetPositionsRef.current.size]);
 
     const renderVerseMode = () => {
         if (loadingVersets) {
@@ -582,7 +510,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        if (error || versetsOneSurah.length === 0) {
+        if (error || versets.length === 0) {
             return (
                 <View style={styles.centerContainer}>
                     <Text style={styles.errorText}>{t('reading.error_loading')}</Text>
@@ -593,7 +521,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        const currentVerseData = versetsOneSurah[currentVerse - 1];
+        const currentVerseData = versets[currentVerse - 1];
 
         return (
             <>
@@ -718,17 +646,16 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     };
 
     const renderPageMode = () => {
-        if (loadingAllVersets) {
+        if (loadingVersets) {
             return (
                 <View style={styles.centerContainer}>
                     <ActivityIndicator size="large" color="#059669" />
                     <Text style={styles.loadingText}>{t('reading.loading_verses')}</Text>
-                    <Text style={styles.loadingSubText}>{t('reading.complete_reading')}...</Text>
                 </View>
             );
         }
 
-        if (allVersets.length === 0) {
+        if (error || versets.length === 0) {
             return (
                 <View style={styles.centerContainer}>
                     <Text style={styles.errorText}>{t('reading.error_loading')}</Text>
@@ -736,82 +663,108 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        // Fonction pour obtenir le nom de la sourate d'un verset
-        const getSourateName = (sourateNumero: number) => {
-            const sourate = souratesForAll.find(s => s.numero === sourateNumero);
-            return sourate ? `${sourate.numero}. ${sourate.nomTraduction} (${sourate.nomArabe})` : `Sourate ${sourateNumero}`;
-        };
-
-        // Fonction pour savoir si c'est le premier verset d'une sourate
-        const isFirstVerseOfSourate = (item: Verset, index: number) => {
-            if (index === 0) return true;
-            return item.sourateNumero !== allVersets[index - 1]?.sourateNumero;
-        };
-
-        const renderVerseItem = ({ item, index }: { item: Verset; index: number }) => {
-            const isFirst = isFirstVerseOfSourate(item, index);
-            const sourateName = isFirst ? getSourateName(item.sourateNumero) : undefined;
-            
-            return (
-                <VerseCard
-                    verset={item}
-                    showTranslation={showTranslation}
-                    playingVersetId={playingVersetId}
-                    onPlayAudio={handlePlayAudio}
-                    isFirstOfSourate={isFirst}
-                    sourateName={sourateName}
-                />
-            );
-        };
-
-        const renderFooter = () => {
-            if (!loadingMore) return null;
-            return (
-                <View style={styles.footerLoader}>
-                    <ActivityIndicator size="small" color="#059669" />
-                    <Text style={styles.footerLoaderText}>{t('reading.loading_more')}</Text>
-                </View>
-            );
-        };
-
         return (
-            <FlatList
-                ref={flatListRef}
-                data={allVersets}
-                keyExtractor={(item) => `${item.sourateNumero}-${item.versetNumero}`}
-                renderItem={renderVerseItem}
+            <ScrollView 
+                ref={scrollViewRef}
+                style={styles.pageScrollContent} 
                 contentContainerStyle={styles.pageListContent}
-                onEndReached={() => {
-                    if (hasMore && !loadingMore) {
-                        loadMore();
-                    }
-                }}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={renderFooter}
-                initialNumToRender={20}
-                maxToRenderPerBatch={20}
-                windowSize={10}
-                removeClippedSubviews={false}
-                onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={viewConfigRef}
-                getItemLayout={getItemLayout}
-                onScrollToIndexFailed={onScrollToIndexFailed}
-            />
+                onScroll={handleScroll}
+                scrollEventThrottle={400}
+                onScrollEndDrag={handleScrollEnd}
+                onMomentumScrollEnd={handleScrollEnd}
+            >
+                {/* Header de la sourate */}
+                {currentSourate && (
+                    <View style={styles.sourateHeader}>
+                        <Text style={styles.sourateHeaderNumber}>{currentSourate.numero}</Text>
+                        <Text style={styles.sourateHeaderName}>{currentSourate.nomArabe}</Text>
+                        <Text style={styles.sourateHeaderTranslation}>{getSurahNameFr(currentSourate.numero)}</Text>
+                    </View>
+                )}
+
+                {/* Tous les versets de la sourate */}
+                {versets.map((verset) => (
+                    <View 
+                        key={verset.id}
+                        onLayout={(event) => {
+                            handleVersetLayout(verset.versetNumero, { y: event.nativeEvent.layout.y });
+                        }}
+                    >
+                        <VerseCard
+                            verset={verset}
+                            showTranslation={showTranslation}
+                            playingVersetId={playingVersetId}
+                            onPlayAudio={handlePlayAudio}
+                            isFirstOfSourate={false}
+                        />
+                    </View>
+                ))}
+
+                {/* Navigation entre sourates */}
+                <View style={styles.sourateNavigation}>
+                    <TouchableOpacity
+                        style={[
+                            styles.sourateNavButton,
+                            selectedSurah === 1 && styles.sourateNavButtonDisabled
+                        ]}
+                        onPress={handlePrevSourate}
+                        disabled={selectedSurah === 1}
+                    >
+                        <ChevronLeft color={selectedSurah === 1 ? '#9ca3af' : '#059669'} size={20} />
+                        <View style={styles.sourateNavButtonContent}>
+                            <Text style={[
+                                styles.sourateNavButtonLabel,
+                                selectedSurah === 1 && styles.sourateNavButtonTextDisabled
+                            ]}>
+                                Précédente
+                            </Text>
+                            {selectedSurah > 1 && sourates.find(s => s.numero === selectedSurah - 1) && (
+                                <Text style={styles.sourateNavButtonName}>
+                                    {getSurahNameFr(selectedSurah - 1)}
+                                </Text>
+                            )}
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[
+                            styles.sourateNavButton,
+                            selectedSurah === 114 && styles.sourateNavButtonDisabled
+                        ]}
+                        onPress={handleNextSourate}
+                        disabled={selectedSurah === 114}
+                    >
+                        <View style={styles.sourateNavButtonContent}>
+                            <Text style={[
+                                styles.sourateNavButtonLabel,
+                                selectedSurah === 114 && styles.sourateNavButtonTextDisabled
+                            ]}>
+                                Suivante
+                            </Text>
+                            {selectedSurah < 114 && sourates.find(s => s.numero === selectedSurah + 1) && (
+                                <Text style={styles.sourateNavButtonName}>
+                                    {getSurahNameFr(selectedSurah + 1)}
+                                </Text>
+                            )}
+                        </View>
+                        <ChevronRight color={selectedSurah === 114 ? '#9ca3af' : '#059669'} size={20} />
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         );
     };
 
     const renderMushafMode = () => {
-        if (loadingAllVersets) {
+        if (loadingVersets) {
             return (
                 <View style={styles.centerContainer}>
                     <ActivityIndicator size="large" color="#059669" />
                     <Text style={styles.loadingText}>{t('reading.loading_verses')}</Text>
-                    <Text style={styles.loadingSubText}>{t('reading.mushaf_loading')}...</Text>
                 </View>
             );
         }
 
-        if (allVersets.length === 0) {
+        if (error || versets.length === 0) {
             return (
                 <View style={styles.centerContainer}>
                     <Text style={styles.errorText}>{t('reading.error_loading')}</Text>
@@ -819,71 +772,93 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        // Fonction pour obtenir le nom de la sourate d'un verset
-        const getSourateName = (sourateNumero: number) => {
-            const sourate = souratesForAll.find(s => s.numero === sourateNumero);
-            return sourate ? `${sourate.numero}. ${sourate.nomTraduction} (${sourate.nomArabe})` : `${sourateNumero}`;
-        };
-
-        // Fonction pour savoir si c'est le premier verset d'une sourate
-        const isFirstVerseOfSourate = (item: Verset, index: number) => {
-            if (index === 0) return true;
-            return item.sourateNumero !== allVersets[index - 1]?.sourateNumero;
-        };
-
-        const renderMushafVerse = ({ item, index }: { item: Verset; index: number }) => {
-            const isFirst = isFirstVerseOfSourate(item, index);
-            const sourateName = isFirst ? getSourateName(item.sourateNumero) : undefined;
-            
-            return (
-                <View style={styles.mushafVerseContainer}>
-                    {isFirst && (
-                        <View style={styles.mushafSourateHeader}>
-                            <Text style={styles.mushafSourateName}>{sourateName}</Text>
-                            <View style={styles.mushafDivider} />
-                        </View>
-                    )}
-                    <View style={styles.mushafVerse}>
-                        <Text style={styles.mushafNumber}>{item.versetNumero}</Text>
-                        <Text style={styles.mushafText}>{item.texteArabe}</Text>
-                    </View>
-                </View>
-            );
-        };
-
-        const renderFooter = () => {
-            if (!loadingMore) return null;
-            return (
-                <View style={styles.footerLoader}>
-                    <ActivityIndicator size="small" color="#059669" />
-                    <Text style={styles.footerLoaderText}>{t('reading.loading_more')}</Text>
-                </View>
-            );
-        };
-
         return (
-            <FlatList
-                ref={flatListRef}
-                data={allVersets}
-                keyExtractor={(item) => `${item.sourateNumero}-${item.versetNumero}`}
-                renderItem={renderMushafVerse}
+            <ScrollView 
+                ref={scrollViewRef}
+                style={styles.mushafScrollContent} 
                 contentContainerStyle={styles.mushafListContent}
-                onEndReached={() => {
-                    if (hasMore && !loadingMore) {
-                        loadMore();
-                    }
-                }}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={renderFooter}
-                initialNumToRender={20}
-                maxToRenderPerBatch={20}
-                windowSize={10}
-                removeClippedSubviews={false}
-                onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={viewConfigRef}
-                getItemLayout={getItemLayout}
-                onScrollToIndexFailed={onScrollToIndexFailed}
-            />
+                onScroll={handleScroll}
+                scrollEventThrottle={400}
+                onScrollEndDrag={handleScrollEnd}
+                onMomentumScrollEnd={handleScrollEnd}
+            >
+                {/* Header de la sourate */}
+                {currentSourate && (
+                    <View style={styles.mushafSourateHeader}>
+                        <Text style={styles.mushafSourateName}>
+                            {currentSourate.numero}. {getSurahNameFr(currentSourate.numero)} ({currentSourate.nomArabe})
+                        </Text>
+                        <View style={styles.mushafDivider} />
+                    </View>
+                )}
+
+                {/* Tous les versets en arabe seulement */}
+                {versets.map((verset) => (
+                    <View 
+                        key={verset.id} 
+                        style={styles.mushafVerseContainer}
+                        onLayout={(event) => {
+                            handleVersetLayout(verset.versetNumero, { y: event.nativeEvent.layout.y });
+                        }}
+                    >
+                        <View style={styles.mushafVerse}>
+                            <Text style={styles.mushafNumber}>{verset.versetNumero}</Text>
+                            <Text style={styles.mushafText}>{verset.texteArabe}</Text>
+                        </View>
+                    </View>
+                ))}
+
+                {/* Navigation entre sourates */}
+                <View style={styles.sourateNavigation}>
+                    <TouchableOpacity
+                        style={[
+                            styles.sourateNavButton,
+                            selectedSurah === 1 && styles.sourateNavButtonDisabled
+                        ]}
+                        onPress={handlePrevSourate}
+                        disabled={selectedSurah === 1}
+                    >
+                        <ChevronLeft color={selectedSurah === 1 ? '#9ca3af' : '#059669'} size={20} />
+                        <View style={styles.sourateNavButtonContent}>
+                            <Text style={[
+                                styles.sourateNavButtonLabel,
+                                selectedSurah === 1 && styles.sourateNavButtonTextDisabled
+                            ]}>
+                                Précédente
+                            </Text>
+                            {selectedSurah > 1 && sourates.find(s => s.numero === selectedSurah - 1) && (
+                                <Text style={styles.sourateNavButtonName}>
+                                    {getSurahNameFr(selectedSurah - 1)}
+                                </Text>
+                            )}
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[
+                            styles.sourateNavButton,
+                            selectedSurah === 114 && styles.sourateNavButtonDisabled
+                        ]}
+                        onPress={handleNextSourate}
+                        disabled={selectedSurah === 114}
+                    >
+                        <View style={styles.sourateNavButtonContent}>
+                            <Text style={[
+                                styles.sourateNavButtonLabel,
+                                selectedSurah === 114 && styles.sourateNavButtonTextDisabled
+                            ]}>
+                                Suivante
+                            </Text>
+                            {selectedSurah < 114 && sourates.find(s => s.numero === selectedSurah + 1) && (
+                                <Text style={styles.sourateNavButtonName}>
+                                    {getSurahNameFr(selectedSurah + 1)}
+                                </Text>
+                            )}
+                        </View>
+                        <ChevronRight color={selectedSurah === 114 ? '#9ca3af' : '#059669'} size={20} />
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         );
     };
 
@@ -904,47 +879,30 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                         <Text style={styles.subtitle}>
                             {mode === 'verse' ? (
                                 currentSourate 
-                                    ? `${currentSourate.numero}:${currentVerse} - ${currentSourate.nomTraduction} (${currentSourate.nomArabe})`
+                                    ? `${currentSourate.numero}:${currentVerse} - ${getSurahNameFr(currentSourate.numero)} (${currentSourate.nomArabe})`
                                     : t('reading.select_surah')
                             ) : (
                                 currentSourate 
-                                    ? `${currentSourate.numero} - ${currentSourate.nomTraduction} (${currentSourate.nomArabe})`
+                                    ? `${currentSourate.numero} - ${getSurahNameFr(currentSourate.numero)} (${currentSourate.nomArabe})`
                                     : t('reading.select_surah')
                             )}
                         </Text>
                         <ChevronDown color="#6b7280" size={16} />
                     </TouchableOpacity>
                 </View>
-                {/* Bouton bookmark uniquement pour modes page/mushaf */}
-                {(mode === 'page' || mode === 'mushaf') && (
-                    <TouchableOpacity 
-                        style={[
-                            styles.bookmarkButton,
-                            isCurrentVerseBookmarked && styles.bookmarkButtonActive
-                        ]}
-                        onPress={async () => {
-                            if (user && currentSourate) {
-                                await toggleBookmark(selectedSurah, currentVerse, currentSourate.nomTraduction);
-                                // Mettre à jour l'état local immédiatement
-                                const newStatus = await isBookmarked(selectedSurah, currentVerse);
-                                setIsCurrentVerseBookmarked(newStatus);
-                            }
-                        }}
-                        disabled={!user}
-                    >
-                        {isCurrentVerseBookmarked ? (
-                            <Bookmark color="#ffffff" size={20} fill="#ffffff" />
-                        ) : (
-                            <BookmarkPlus color="#059669" size={20} />
-                        )}
-                    </TouchableOpacity>
-                )}
             </View>
 
-            {/* Progress Bar */}
+            {/* Progression globale du Coran */}
+            <QuranProgressBar 
+                currentSurah={selectedSurah}
+                totalSurahs={114}
+                mode={mode}
+            />
+
+            {/* Progress Bar de la sourate */}
             {currentSourate && (
                 <SurahProgressBar
-                    surahName={currentSourate.nomTraduction}
+                    surahName={getSurahNameFr(currentSourate.numero)}
                     surahNumber={currentSourate.numero}
                     currentVerse={currentVerse}
                     totalVerses={mode === 'verse' ? totalVerses : currentSourate.nombreVersets}
@@ -995,7 +953,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                                                     styles.selectorItemName,
                                                     tempSelectedSurah === sourate.numero && styles.selectorItemTextActive
                                                 ]}>
-                                                    {sourate.nomFrancais}
+                                                    {getSurahNameFr(sourate.numero)}
                                                 </Text>
                                                 <Text style={[
                                                     styles.selectorItemArabic,
@@ -1050,7 +1008,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                     visible={showCompletionModal}
                     sourateName={completedSourate.nom}
                     sourateNumber={completedSourate.numero}
-                    nextSourateName={completedSourate.numero < 114 ? sourates.find(s => s.numero === completedSourate.numero + 1)?.nomTraduction : undefined}
+                    nextSourateName={completedSourate.numero < 114 ? getSurahNameFr(completedSourate.numero + 1) : undefined}
                     onStartQuiz={handleStartQuiz}
                     onSkip={handleSkipQuiz}
                     onClose={() => setShowCompletionModal(false)}
@@ -1112,16 +1070,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             ) : (
                 <View style={styles.pageContent}>
                     {renderMushafMode()}
-                </View>
-            )}
-
-            {/* Loader pendant le saut vers une sourate */}
-            {isJumpingToSourate && (
-                <View style={styles.jumpingOverlay}>
-                    <View style={styles.jumpingCard}>
-                        <ActivityIndicator size="large" color="#059669" />
-                        <Text style={styles.jumpingText}>Chargement de la sourate...</Text>
-                    </View>
                 </View>
             )}
         </View>
@@ -1685,5 +1633,75 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#374151',
         fontWeight: '500',
+    },
+    // Nouveaux styles pour les modes simplifiés
+    pageScrollContent: {
+        flex: 1,
+    },
+    mushafScrollContent: {
+        flex: 1,
+    },
+    sourateHeader: {
+        alignItems: 'center',
+        padding: 24,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 3,
+        borderBottomColor: '#059669',
+        marginBottom: 16,
+    },
+    sourateHeaderNumber: {
+        fontSize: 48,
+        fontWeight: 'bold',
+        color: '#059669',
+    },
+    sourateHeaderName: {
+        fontSize: 32,
+        color: '#1f2937',
+        marginTop: 8,
+        textAlign: 'center',
+    },
+    sourateHeaderTranslation: {
+        fontSize: 20,
+        color: '#6b7280',
+        marginTop: 4,
+    },
+    sourateNavigation: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 12,
+        padding: 16,
+        paddingBottom: 32,
+    },
+    sourateNavButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#ffffff',
+        padding: 16,
+        borderRadius: 12,
+        gap: 8,
+        borderWidth: 2,
+        borderColor: '#059669',
+    },
+    sourateNavButtonDisabled: {
+        borderColor: '#e5e7eb',
+        backgroundColor: '#f9fafb',
+    },
+    sourateNavButtonContent: {
+        flex: 1,
+    },
+    sourateNavButtonLabel: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#059669',
+    },
+    sourateNavButtonName: {
+        fontSize: 12,
+        color: '#6b7280',
+        marginTop: 2,
+    },
+    sourateNavButtonTextDisabled: {
+        color: '#9ca3af',
     },
 });

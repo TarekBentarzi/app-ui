@@ -105,6 +105,49 @@ export function useAllVersets() {
     }
   }, [currentSourate, loadingMore, hasMore]);
 
+  // Charger une plage de sourates spécifique (pour les sauts directs)
+  const loadSourateRange = useCallback(async (targetSourate: number) => {
+    try {
+      setLoadingMore(true);
+      // Charger la sourate cible + 2 avant et 2 après pour le contexte
+      const start = Math.max(1, targetSourate - 2);
+      const end = Math.min(114, targetSourate + 2);
+      
+      console.log(`[useAllVersets] Chargement prioritaire sourates ${start}-${end}`);
+      
+      const newVersets: Verset[] = [];
+      for (let i = start; i <= end; i++) {
+        // Vérifier si la sourate n'est pas déjà chargée
+        const alreadyLoaded = versets.some(v => v.sourateNumero === i);
+        if (!alreadyLoaded) {
+          const data = await quranService.getVersetsBySourate(i);
+          newVersets.push(...data);
+        }
+      }
+      
+      if (newVersets.length > 0) {
+        setVersets(prev => {
+          // Fusionner et trier par sourate puis verset
+          const merged = [...prev, ...newVersets];
+          return merged.sort((a, b) => {
+            if (a.sourateNumero !== b.sourateNumero) {
+              return a.sourateNumero - b.sourateNumero;
+            }
+            return a.versetNumero - b.versetNumero;
+          });
+        });
+      }
+      
+      // Mettre à jour currentSourate pour le chargement progressif suivant
+      setCurrentSourate(Math.max(currentSourate, end + 1));
+      setHasMore(end < 114);
+    } catch (err) {
+      console.error('Error loading sourate range:', err);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [currentSourate, versets, loadingMore]);
+
   return {
     versets,
     loading,
@@ -112,6 +155,7 @@ export function useAllVersets() {
     error,
     hasMore,
     loadMore,
+    loadSourateRange,
     sourates,
   };
 }
