@@ -80,12 +80,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const isAutoScrollingRef = useRef(false);
     const hasInitiallyScrolledRef = useRef({ verse: false, page: false, mushaf: false });
     
-    // Refs utilisées selon le mode actif
-    const saveTimerRef = mode === 'verse' ? verseSaveTimerRef : mode === 'page' ? pageSaveTimerRef : mushafSaveTimerRef;
-    const versetPositionsRef = mode === 'verse' ? verseVersetPositionsRef : mode === 'page' ? pageVersetPositionsRef : mushafVersetPositionsRef;
-    const scrollViewRef = mode === 'verse' ? verseScrollViewRef : mode === 'page' ? pageScrollViewRef : mushafScrollViewRef;
-    const lastSavedPositionRef = mode === 'verse' ? verseLastSavedPositionRef : mode === 'page' ? pageLastSavedPositionRef : mushafLastSavedPositionRef;
-    
     // Charger les sourates (commun à tous les modes)
     const { sourates, loading: loadingSourates } = useSourates();
     
@@ -193,16 +187,19 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             return;
         }
 
-        if (lastSavedPositionRef.current.sourate === selectedSurah && 
-            lastSavedPositionRef.current.verset === currentVerse) {
+        // Utiliser les refs spécifiques selon le mode
+        const currentLastSavedRef = mode === 'page' ? pageLastSavedPositionRef : mushafLastSavedPositionRef;
+        
+        if (currentLastSavedRef.current.sourate === selectedSurah && 
+            currentLastSavedRef.current.verset === currentVerse) {
             return;
         }
 
         currentSaveProgress(selectedSurah, currentVerse)
             .then(() => {
-                lastSavedPositionRef.current = { sourate: selectedSurah, verset: currentVerse };
+                currentLastSavedRef.current = { sourate: selectedSurah, verset: currentVerse };
             });
-    }, [mode, selectedSurah, currentVerse, currentSaveProgress, effectiveUserId]);
+    }, [mode, selectedSurah, currentVerse, currentSaveProgress]);
 
     // Sauvegarder automatiquement avec un petit debounce (backup)
     useEffect(() => {
@@ -210,25 +207,29 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             return;
         }
 
-        if (saveTimerRef.current) {
-            clearTimeout(saveTimerRef.current);
+        // Utiliser les refs spécifiques selon le mode
+        const currentSaveTimer = mode === 'verse' ? verseSaveTimerRef : mode === 'page' ? pageSaveTimerRef : mushafSaveTimerRef;
+        const currentLastSavedRef = mode === 'verse' ? verseLastSavedPositionRef : mode === 'page' ? pageLastSavedPositionRef : mushafLastSavedPositionRef;
+
+        if (currentSaveTimer.current) {
+            clearTimeout(currentSaveTimer.current);
         }
 
-        saveTimerRef.current = setTimeout(() => {
-            if (lastSavedPositionRef.current.sourate === selectedSurah && 
-                lastSavedPositionRef.current.verset === currentVerse) {
+        currentSaveTimer.current = setTimeout(() => {
+            if (currentLastSavedRef.current.sourate === selectedSurah && 
+                currentLastSavedRef.current.verset === currentVerse) {
                 return;
             }
 
             currentSaveProgress(selectedSurah, currentVerse)
                 .then(() => {
-                    lastSavedPositionRef.current = { sourate: selectedSurah, verset: currentVerse };
+                    currentLastSavedRef.current = { sourate: selectedSurah, verset: currentVerse };
                 });
         }, 200);
 
         return () => {
-            if (saveTimerRef.current) {
-                clearTimeout(saveTimerRef.current);
+            if (currentSaveTimer.current) {
+                clearTimeout(currentSaveTimer.current);
             }
         };
     }, [selectedSurah, currentVerse, isInitialized, currentSaveProgress, mode]);
@@ -416,8 +417,13 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
 
     // Gestion de la sauvegarde automatique au scroll
     const handleVersetLayout = useCallback((versetNumero: number, layout: { y: number }) => {
-        versetPositionsRef.current.set(versetNumero, layout.y);
-    }, []);
+        // Utiliser la Map spécifique au mode actif
+        if (mode === 'page') {
+            pageVersetPositionsRef.current.set(versetNumero, layout.y);
+        } else if (mode === 'mushaf') {
+            mushafVersetPositionsRef.current.set(versetNumero, layout.y);
+        }
+    }, [mode]);
 
     const handleScroll = useCallback((event: any) => {
         // Ne rien faire en mode verse (il utilise la navigation par boutons)
@@ -426,13 +432,38 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         // Ne rien faire si on est en train de scroller automatiquement
         if (isAutoScrollingRef.current) return;
 
-        // On ne met plus à jour automatiquement le verset pendant le scroll
-        // pour éviter les changements de position non désirés
+        const scrollY = event.nativeEvent.contentOffset.y;
+        
+        // Utiliser la bonne Map selon le mode actif
+        const currentVersetPositions = mode === 'page' ? pageVersetPositionsRef.current : mushafVersetPositionsRef.current;
+        
+        // Trouver le verset le plus proche de la position de scroll
+        let closestVerset = 1;
+        let closestDistance = Infinity;
+        
+        currentVersetPositions.forEach((y, versetNum) => {
+            const distance = Math.abs(scrollY - y);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestVerset = versetNum;
+            }
+        });
+        
+        // Mettre à jour la position pour le mode actif
+        if (mode === 'page') {
+            setPagePosition(prev => ({ ...prev, verset: closestVerset }));
+        } else if (mode === 'mushaf') {
+            setMushafPosition(prev => ({ ...prev, verset: closestVerset }));
+        }
     }, [mode]);
 
     // Réinitialiser les positions des versets quand on change de sourate OU de mode
     useEffect(() => {
-        versetPositionsRef.current.clear();
+        if (mode === 'page') {
+            pageVersetPositionsRef.current.clear();
+        } else if (mode === 'mushaf') {
+            mushafVersetPositionsRef.current.clear();
+        }
     }, [selectedSurah, mode]);
 
     // Réinitialiser le flag de scroll initial SEULEMENT quand on change de sourate (pas de mode)
@@ -450,20 +481,24 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         if (hasInitiallyScrolledRef.current[modeKey]) return;
 
         const timer = setTimeout(() => {
-            if (scrollViewRef.current && currentVerse > 1 && versetPositionsRef.current.size > 0) {
+            // Utiliser les refs spécifiques selon le mode
+            const currentScrollView = mode === 'page' ? pageScrollViewRef : mushafScrollViewRef;
+            const currentVersetPositions = mode === 'page' ? pageVersetPositionsRef : mushafVersetPositionsRef;
+            
+            if (currentScrollView.current && currentVerse > 1 && currentVersetPositions.current.size > 0) {
                 // Bloquer handleScroll pendant le scroll automatique
                 isAutoScrollingRef.current = true;
                 
                 // Chercher la position exacte du verset dans la map
-                const targetY = versetPositionsRef.current.get(currentVerse);
+                const targetY = currentVersetPositions.current.get(currentVerse);
                 
                 if (targetY !== undefined) {
                     // Utiliser la position réelle du verset
-                    scrollViewRef.current.scrollTo({ y: targetY, animated: false });
+                    currentScrollView.current.scrollTo({ y: targetY, animated: false });
                 } else {
                     // Fallback: estimation si la position n'est pas encore calculée
                     const estimatedY = (currentVerse - 1) * 200;
-                    scrollViewRef.current.scrollTo({ y: estimatedY, animated: false });
+                    currentScrollView.current.scrollTo({ y: estimatedY, animated: false });
                 }
                 
                 // Marquer qu'on a scrollé pour ce mode
@@ -477,7 +512,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         }, 300); // Délai plus long pour laisser le temps aux versets de se positionner
 
         return () => clearTimeout(timer);
-    }, [mode, currentVerse, versetPositionsRef.current.size]);
+    }, [mode, currentVerse, pageVersetPositionsRef.current.size, mushafVersetPositionsRef.current.size]);
 
     const renderVerseMode = () => {
         if (loadingVerseVersets) {
