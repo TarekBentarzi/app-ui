@@ -59,21 +59,45 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const [lastLoadedMode, setLastLoadedMode] = useState<ReadingMode | null>(null);
     const [progressionsLoaded, setProgressionsLoaded] = useState({ verse: false, page: false, mushaf: false });
     
-    // Timer de sauvegarde automatique (debounce)
-    const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+    // Refs SÉPARÉES pour chaque mode - AUCUNE DÉPENDANCE
+    const verseSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const pageSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const mushafSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     
-    // Tracker les positions des versets pour la sauvegarde automatique au scroll
-    const versetPositionsRef = useRef<Map<number, number>>(new Map());
-    const scrollViewRef = useRef<ScrollView>(null);
+    const verseVersetPositionsRef = useRef<Map<number, number>>(new Map());
+    const pageVersetPositionsRef = useRef<Map<number, number>>(new Map());
+    const mushafVersetPositionsRef = useRef<Map<number, number>>(new Map());
+    
+    const verseScrollViewRef = useRef<ScrollView>(null);
+    const pageScrollViewRef = useRef<ScrollView>(null);
+    const mushafScrollViewRef = useRef<ScrollView>(null);
+    
+    const verseLastSavedPositionRef = useRef({ sourate: 0, verset: 0 });
+    const pageLastSavedPositionRef = useRef({ sourate: 0, verset: 0 });
+    const mushafLastSavedPositionRef = useRef({ sourate: 0, verset: 0 });
     
     // Flag pour éviter le scroll automatique pendant qu'on scrolle manuellement
     const isAutoScrollingRef = useRef(false);
     const hasInitiallyScrolledRef = useRef({ verse: false, page: false, mushaf: false });
-    const lastSavedPositionRef = useRef({ sourate: 0, verset: 0 });
     
-    // Charger une sourate à la fois pour tous les modes
+    // Refs utilisées selon le mode actif
+    const saveTimerRef = mode === 'verse' ? verseSaveTimerRef : mode === 'page' ? pageSaveTimerRef : mushafSaveTimerRef;
+    const versetPositionsRef = mode === 'verse' ? verseVersetPositionsRef : mode === 'page' ? pageVersetPositionsRef : mushafVersetPositionsRef;
+    const scrollViewRef = mode === 'verse' ? verseScrollViewRef : mode === 'page' ? pageScrollViewRef : mushafScrollViewRef;
+    const lastSavedPositionRef = mode === 'verse' ? verseLastSavedPositionRef : mode === 'page' ? pageLastSavedPositionRef : mushafLastSavedPositionRef;
+    
+    // Charger les sourates (commun à tous les modes)
     const { sourates, loading: loadingSourates } = useSourates();
-    const { versets, loading: loadingVersets, error } = useVersets(selectedSurah);
+    
+    // Charger les VERSETS SÉPARÉMENT pour chaque mode - 3 appels indépendants
+    const { versets: verseVersets, loading: loadingVerseVersets, error: verseError } = useVersets(versePosition.sourate);
+    const { versets: pageVersets, loading: loadingPageVersets, error: pageError } = useVersets(pagePosition.sourate);
+    const { versets: mushafVersets, loading: loadingMushafVersets, error: mushafError } = useVersets(mushafPosition.sourate);
+    
+    // Variables utilisées selon le mode actif
+    const versets = mode === 'verse' ? verseVersets : mode === 'page' ? pageVersets : mushafVersets;
+    const loadingVersets = mode === 'verse' ? loadingVerseVersets : mode === 'page' ? loadingPageVersets : loadingMushafVersets;
+    const error = mode === 'verse' ? verseError : mode === 'page' ? pageError : mushafError;
     
     const currentSourate = sourates.find(s => s.numero === selectedSurah);
     const tempSourate = sourates.find(s => s.numero === tempSelectedSurah);
@@ -456,7 +480,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     }, [mode, currentVerse, versetPositionsRef.current.size]);
 
     const renderVerseMode = () => {
-        if (loadingVersets) {
+        if (loadingVerseVersets) {
             return (
                 <View style={styles.centerContainer}>
                     <ActivityIndicator size="large" color="#059669" />
@@ -465,7 +489,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        if (error || versets.length === 0) {
+        if (verseError || verseVersets.length === 0) {
             return (
                 <View style={styles.centerContainer}>
                     <Text style={styles.errorText}>{t('reading.error_loading')}</Text>
@@ -476,7 +500,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        const currentVerseData = versets[currentVerse - 1];
+        const currentVerseData = verseVersets[currentVerse - 1];
 
         return (
             <>
@@ -601,7 +625,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     };
 
     const renderPageMode = () => {
-        if (loadingVersets) {
+        if (loadingPageVersets) {
             return (
                 <View style={styles.centerContainer}>
                     <ActivityIndicator size="large" color="#059669" />
@@ -610,7 +634,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        if (error || versets.length === 0) {
+        if (pageError || pageVersets.length === 0) {
             return (
                 <View style={styles.centerContainer}>
                     <Text style={styles.errorText}>{t('reading.error_loading')}</Text>
@@ -619,8 +643,9 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         }
 
         return (
-            <ScrollView 
-                ref={scrollViewRef}
+            <ScrollView
+                key="page-scrollview"
+                ref={pageScrollViewRef}
                 style={styles.pageScrollContent} 
                 contentContainerStyle={styles.pageListContent}
                 onScroll={handleScroll}
@@ -638,7 +663,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 )}
 
                 {/* Tous les versets de la sourate */}
-                {versets.map((verset) => (
+                {pageVersets.map((verset) => (
                     <View 
                         key={verset.id}
                         onLayout={(event) => {
@@ -710,7 +735,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     };
 
     const renderMushafMode = () => {
-        if (loadingVersets) {
+        if (loadingMushafVersets) {
             return (
                 <View style={styles.centerContainer}>
                     <ActivityIndicator size="large" color="#059669" />
@@ -719,7 +744,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             );
         }
 
-        if (error || versets.length === 0) {
+        if (mushafError || mushafVersets.length === 0) {
             return (
                 <View style={styles.centerContainer}>
                     <Text style={styles.errorText}>{t('reading.error_loading')}</Text>
@@ -728,8 +753,9 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         }
 
         return (
-            <ScrollView 
-                ref={scrollViewRef}
+            <ScrollView
+                key="mushaf-scrollview"
+                ref={mushafScrollViewRef}
                 style={styles.mushafScrollContent} 
                 contentContainerStyle={styles.mushafListContent}
                 onScroll={handleScroll}
@@ -748,7 +774,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 )}
 
                 {/* Tous les versets en arabe seulement */}
-                {versets.map((verset) => (
+                {mushafVersets.map((verset) => (
                     <View 
                         key={verset.id} 
                         style={styles.mushafVerseContainer}
@@ -1013,20 +1039,29 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 </View>
             )}
 
-            {/* Content */}
-            {mode === 'verse' ? (
-                <ScrollView style={styles.scrollContent} contentContainerStyle={styles.content}>
-                    {renderVerseMode()}
-                </ScrollView>
-            ) : mode === 'page' ? (
-                <View style={styles.pageContent}>
+            {/* Content - Tous les onglets restent montés pour avoir des scrollbars indépendantes */}
+            <View style={styles.pageContent}>
+                {/* Mode Verse */}
+                <View style={mode !== 'verse' ? styles.hiddenTab : styles.visibleTab}>
+                    <ScrollView 
+                        key="verse-scrollview"
+                        style={styles.scrollContent} 
+                        contentContainerStyle={styles.content}
+                    >
+                        {renderVerseMode()}
+                    </ScrollView>
+                </View>
+
+                {/* Mode Page */}
+                <View style={mode !== 'page' ? styles.hiddenTab : styles.visibleTab}>
                     {renderPageMode()}
                 </View>
-            ) : (
-                <View style={styles.pageContent}>
+
+                {/* Mode Mushaf */}
+                <View style={mode !== 'mushaf' ? styles.hiddenTab : styles.visibleTab}>
                     {renderMushafMode()}
                 </View>
-            )}
+            </View>
         </View>
     );
 };
@@ -1044,6 +1079,12 @@ const styles = StyleSheet.create({
     },
     pageContent: {
         flex: 1,
+    },
+    visibleTab: {
+        flex: 1,
+    },
+    hiddenTab: {
+        display: 'none', // Cache complètement l'onglet mais le garde monté
     },
     header: {
         flexDirection: 'row',
