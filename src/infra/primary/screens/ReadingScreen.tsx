@@ -159,7 +159,10 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     useEffect(() => {
         if (!loadingPage && !progressionsLoaded.page) {
             if (pageProgress) {
+                console.log('[PAGE MODE] 📖 Restauration progression:', pageProgress.sourateNumero, ':', pageProgress.versetNumero);
                 setPagePosition({ sourate: pageProgress.sourateNumero, verset: pageProgress.versetNumero });
+            } else {
+                console.log('[PAGE MODE] ⚠️ Pas de progression sauvegardée');
             }
             setProgressionsLoaded(prev => ({ ...prev, page: true }));
         }
@@ -168,7 +171,10 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     useEffect(() => {
         if (!loadingMushaf && !progressionsLoaded.mushaf) {
             if (mushafProgress) {
+                console.log('[MUSHAF MODE] 📖 Restauration progression:', mushafProgress.sourateNumero, ':', mushafProgress.versetNumero);
                 setMushafPosition({ sourate: mushafProgress.sourateNumero, verset: mushafProgress.versetNumero });
+            } else {
+                console.log('[MUSHAF MODE] ⚠️ Pas de progression sauvegardée');
             }
             setProgressionsLoaded(prev => ({ ...prev, mushaf: true }));
         }
@@ -192,12 +198,15 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         
         if (currentLastSavedRef.current.sourate === selectedSurah && 
             currentLastSavedRef.current.verset === currentVerse) {
+            console.log(`[${mode.toUpperCase()}] ⏭️ Déjà sauvegardé - ignoré:`, selectedSurah, ':', currentVerse);
             return;
         }
 
+        console.log(`[${mode.toUpperCase()}] 💾 Sauvegarde position:`, selectedSurah, ':', currentVerse);
         currentSaveProgress(selectedSurah, currentVerse)
             .then(() => {
                 currentLastSavedRef.current = { sourate: selectedSurah, verset: currentVerse };
+                console.log(`[${mode.toUpperCase()}] ✅ Position sauvegardée!`);
             });
     }, [mode, selectedSurah, currentVerse, currentSaveProgress]);
 
@@ -416,14 +425,20 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     };
 
     // Gestion de la sauvegarde automatique au scroll
-    const handleVersetLayout = useCallback((versetNumero: number, layout: { y: number }) => {
-        // Utiliser la Map spécifique au mode actif
-        if (mode === 'page') {
+    const handleVersetLayout = useCallback((versetNumero: number, layout: { y: number }, targetMode: ReadingMode) => {
+        // Utiliser la Map spécifique au mode passé en paramètre (pas le mode actuel!)
+        if (targetMode === 'page') {
             pageVersetPositionsRef.current.set(versetNumero, layout.y);
-        } else if (mode === 'mushaf') {
+            if (versetNumero % 20 === 0) { // Log tous les 20 versets pour ne pas spammer
+                console.log(`[PAGE] 📍 Map size:`, pageVersetPositionsRef.current.size);
+            }
+        } else if (targetMode === 'mushaf') {
             mushafVersetPositionsRef.current.set(versetNumero, layout.y);
+            if (versetNumero % 20 === 0) {
+                console.log(`[MUSHAF] 📍 Map size:`, mushafVersetPositionsRef.current.size);
+            }
         }
-    }, [mode]);
+    }, []);
 
     const handleScroll = useCallback((event: any) => {
         // Ne rien faire en mode verse (il utilise la navigation par boutons)
@@ -476,6 +491,8 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     useEffect(() => {
         if (mode === 'verse') return; // Mode verse n'utilise pas de scroll continu
         
+        console.log(`[${mode.toUpperCase()}] 🔄 Effet de scroll - currentVerse:`, currentVerse, 'hasScrolled:', hasInitiallyScrolledRef.current[mode as keyof typeof hasInitiallyScrolledRef.current]);
+        
         // Si on a déjà scrollé pour ce mode, ne rien faire
         const modeKey = mode as keyof typeof hasInitiallyScrolledRef.current;
         if (hasInitiallyScrolledRef.current[modeKey]) return;
@@ -486,6 +503,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             const currentVersetPositions = mode === 'page' ? pageVersetPositionsRef : mushafVersetPositionsRef;
             
             if (currentScrollView.current && currentVerse > 1 && currentVersetPositions.current.size > 0) {
+                console.log(`[${mode.toUpperCase()}] 📍 Scroll vers verset:`, currentVerse, 'positions map size:', currentVersetPositions.current.size);
                 // Bloquer handleScroll pendant le scroll automatique
                 isAutoScrollingRef.current = true;
                 
@@ -494,10 +512,12 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 
                 if (targetY !== undefined) {
                     // Utiliser la position réelle du verset
+                    console.log(`[${mode.toUpperCase()}] ✅ Position trouvée:`, targetY);
                     currentScrollView.current.scrollTo({ y: targetY, animated: false });
                 } else {
                     // Fallback: estimation si la position n'est pas encore calculée
                     const estimatedY = (currentVerse - 1) * 200;
+                    console.log(`[${mode.toUpperCase()}] ⚠️ Position estimée (pas dans map):`, estimatedY);
                     currentScrollView.current.scrollTo({ y: estimatedY, animated: false });
                 }
                 
@@ -702,7 +722,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                     <View 
                         key={verset.id}
                         onLayout={(event) => {
-                            handleVersetLayout(verset.versetNumero, { y: event.nativeEvent.layout.y });
+                            handleVersetLayout(verset.versetNumero, { y: event.nativeEvent.layout.y }, 'page');
                         }}
                     >
                         <VerseCard
@@ -814,7 +834,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                         key={verset.id} 
                         style={styles.mushafVerseContainer}
                         onLayout={(event) => {
-                            handleVersetLayout(verset.versetNumero, { y: event.nativeEvent.layout.y });
+                            handleVersetLayout(verset.versetNumero, { y: event.nativeEvent.layout.y }, 'mushaf');
                         }}
                     >
                         <View style={styles.mushafVerse}>
