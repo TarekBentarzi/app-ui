@@ -8,7 +8,6 @@ import { useSourates, useVersets, useProgress, useBookmarks } from '@/shared/hoo
 import { Audio } from 'expo-av';
 import type { Sourate, Verset } from '@/infra/secondary/quran';
 import { VerseCard } from './components/VerseCard';
-import { SourateCompletionModal } from './components/SourateCompletionModal';
 import { SurahProgressBar } from './components/SurahProgressBar';
 import { QuranProgressBar } from './components/QuranProgressBar';
 import { quizService } from '@/infra/secondary/quran';
@@ -51,8 +50,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const [sound, setSound] = useState<Audio.Sound>();
     const [playingVersetId, setPlayingVersetId] = useState<string | null>(null);
     const [showSelectorModal, setShowSelectorModal] = useState(false);
-    const [showCompletionModal, setShowCompletionModal] = useState(false);
-    const [completedSourate, setCompletedSourate] = useState<{ numero: number; nom: string } | null>(null);
     const [tempSelectedSurah, setTempSelectedSurah] = useState(1);
     const [tempSelectedVerse, setTempSelectedVerse] = useState(1);
     const [isInitialized, setIsInitialized] = useState(false);
@@ -341,18 +338,8 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             if (user) {
                 try {
                     await quizService.unlockSourate(user.id, selectedSurah);
-                    
-                    // Afficher le modal de félicitation seulement en mode verse
-                    if (mode === 'verse') {
-                        setCompletedSourate({
-                            numero: selectedSurah,
-                            nom: getSurahNameFr(selectedSurah),
-                        });
-                        setShowCompletionModal(true);
-                    } else {
-                        // En mode page ou mushaf, passer directement à la sourate suivante
-                        moveToNextSourate();
-                    }
+                    // Passer directement à la sourate suivante (pas de modal de quiz en lecture)
+                    moveToNextSourate();
                 } catch (error) {
                     // En cas d'erreur, passer quand même à la sourate suivante
                     moveToNextSourate();
@@ -372,21 +359,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         });
         // Sauvegarder immédiatement (synchronise currentSurah/currentVerse automatiquement)
         currentSaveProgress(nextSurah, 1);
-    };
-
-    const handleStartQuiz = () => {
-        setShowCompletionModal(false);
-        if (completedSourate) {
-            navigation.navigate('Quiz', {
-                sourateNumero: completedSourate.numero,
-                isNew: true,
-            });
-        }
-    };
-
-    const handleSkipQuiz = () => {
-        setShowCompletionModal(false);
-        moveToNextSourate();
     };
 
     const handleSurahChange = (numero: number) => {
@@ -1039,8 +1011,16 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 animationType="slide"
                 onRequestClose={() => setShowSelectorModal(false)}
             >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
+                <TouchableOpacity 
+                    style={styles.modalOverlay}
+                    activeOpacity={1}
+                    onPress={() => setShowSelectorModal(false)}
+                >
+                    <TouchableOpacity 
+                        style={styles.modalContent}
+                        activeOpacity={1}
+                        onPress={(e) => e.stopPropagation()}
+                    >
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>{t('reading.select_passage')}</Text>
                             <TouchableOpacity onPress={() => setShowSelectorModal(false)}>
@@ -1135,22 +1115,9 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                         >
                             <Text style={styles.modalConfirmText}>{t('common.confirm')}</Text>
                         </TouchableOpacity>
-                    </View>
-                </View>
+                    </TouchableOpacity>
+                </TouchableOpacity>
             </Modal>
-
-            {/* Modal de félicitation après sourate */}
-            {completedSourate && (
-                <SourateCompletionModal
-                    visible={showCompletionModal}
-                    sourateName={completedSourate.nom}
-                    sourateNumber={completedSourate.numero}
-                    nextSourateName={completedSourate.numero < 114 ? getSurahNameFr(completedSourate.numero + 1) : undefined}
-                    onStartQuiz={handleStartQuiz}
-                    onSkip={handleSkipQuiz}
-                    onClose={() => setShowCompletionModal(false)}
-                />
-            )}
 
             {/* Tabs */}
             <View style={styles.tabsContainer}>
