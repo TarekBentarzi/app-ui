@@ -76,6 +76,10 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const pageLastSavedPositionRef = useRef({ sourate: 0, verset: 0 });
     const mushafLastSavedPositionRef = useRef({ sourate: 0, verset: 0 });
     
+    // Refs pour le modal de sélection
+    const surahSelectorScrollRef = useRef<ScrollView>(null);
+    const verseSelectorScrollRef = useRef<ScrollView>(null);
+    
     // Flag pour éviter le scroll automatique pendant qu'on scrolle manuellement
     const isAutoScrollingRef = useRef(false);
     const hasInitiallyScrolledRef = useRef({ verse: false, page: false, mushaf: false });
@@ -397,28 +401,84 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         setShowSelectorModal(true);
     };
 
+    // Auto-scroll vers les éléments sélectionnés quand le modal s'ouvre
+    useEffect(() => {
+        if (showSelectorModal) {
+            // Utiliser setTimeout pour laisser le modal se rendre d'abord
+            setTimeout(() => {
+                // Scroll vers la sourate sélectionnée (environ 60px par item)
+                if (surahSelectorScrollRef.current && tempSelectedSurah > 1) {
+                    const estimatedY = (tempSelectedSurah - 1) * 60;
+                    surahSelectorScrollRef.current.scrollTo({ y: estimatedY, animated: true });
+                }
+                
+                // Scroll vers le verset sélectionné (environ 50px par item)
+                if (verseSelectorScrollRef.current && tempSelectedVerse > 1) {
+                    const estimatedY = (tempSelectedVerse - 1) * 50;
+                    verseSelectorScrollRef.current.scrollTo({ y: estimatedY, animated: true });
+                }
+            }, 100);
+        }
+    }, [showSelectorModal, tempSelectedSurah, tempSelectedVerse]);
+
     const handleConfirmSelection = () => {
+        const isChangingSurah = tempSelectedSurah !== selectedSurah;
+        const isChangingVerse = tempSelectedVerse !== currentVerse;
+        
+        // Si aucun changement, juste fermer le modal
+        if (!isChangingSurah && !isChangingVerse) {
+            setShowSelectorModal(false);
+            return;
+        }
+        
         // Mettre à jour la position
         updatePosition(tempSelectedSurah, tempSelectedVerse);
         setShowSelectorModal(false);
         
         // Réinitialiser le flag de scroll pour permettre le scroll vers la nouvelle position
+        // IMPORTANT: Faire cela même si on reste sur la même sourate
         if (mode !== 'verse') {
             const modeKey = mode as keyof typeof hasInitiallyScrolledRef.current;
             hasInitiallyScrolledRef.current[modeKey] = false;
             
-            // Forcer le scroll vers le verset sélectionné après un court délai
-            setTimeout(() => {
+            // Fonction pour tenter de scroller avec retry
+            const attemptScroll = (retries = 5) => {
                 const currentScrollView = mode === 'page' ? pageScrollViewRef : mushafScrollViewRef;
                 const currentVersetPositions = mode === 'page' ? pageVersetPositionsRef : mushafVersetPositionsRef;
                 
-                if (currentScrollView.current && currentVersetPositions.current.size > 0) {
-                    const targetY = currentVersetPositions.current.get(tempSelectedVerse);
-                    if (targetY !== undefined) {
-                        currentScrollView.current.scrollTo({ y: targetY, animated: true });
+                if (!currentScrollView.current) {
+                    if (retries > 0) {
+                        setTimeout(() => attemptScroll(retries - 1), 200);
                     }
+                    return;
                 }
-            }, 300);
+                
+                // Attendre que les positions soient calculées
+                if (currentVersetPositions.current.size === 0) {
+                    if (retries > 0) {
+                        setTimeout(() => attemptScroll(retries - 1), 200);
+                    }
+                    return;
+                }
+                
+                const targetY = currentVersetPositions.current.get(tempSelectedVerse);
+                if (targetY !== undefined) {
+                    isAutoScrollingRef.current = true;
+                    currentScrollView.current.scrollTo({ y: targetY, animated: true });
+                    hasInitiallyScrolledRef.current[modeKey] = true;
+                    
+                    // Réactiver handleScroll après le scroll
+                    setTimeout(() => {
+                        isAutoScrollingRef.current = false;
+                    }, 500);
+                } else if (retries > 0) {
+                    // Si la position du verset n'est pas encore calculée, réessayer
+                    setTimeout(() => attemptScroll(retries - 1), 200);
+                }
+            };
+            
+            // Lancer le scroll avec un délai initial pour laisser le temps aux versets de se rendre
+            setTimeout(() => attemptScroll(), isChangingSurah ? 500 : 300);
         }
         
         // Sauvegarder avec un petit délai pour s'assurer que la position est bien mise à jour
@@ -497,11 +557,13 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         }
     }, [selectedSurah, mode]);
 
-    // Réinitialiser le flag de scroll initial SEULEMENT quand on change de sourate (pas de mode)
+    // Réinitialiser le flag de scroll initial quand on change de sourate
+    // Note: Le flag est aussi réinitialisé dans handleConfirmSelection pour permettre
+    // la navigation vers un nouveau verset dans la même sourate
     useEffect(() => {
         const modeKey = mode as keyof typeof hasInitiallyScrolledRef.current;
         hasInitiallyScrolledRef.current[modeKey] = false;
-    }, [selectedSurah]);
+    }, [selectedSurah, mode]);
 
     // Scroller vers la position sauvegardée UNE SEULE FOIS au chargement initial pour chaque mode
     useEffect(() => {
@@ -986,11 +1048,20 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={styles.selectorsRow}>
+                        <ScrollView 
+                            style={styles.modalScrollView}
+                            contentContainerStyle={styles.modalScrollContent}
+                            showsVerticalScrollIndicator={false}
+                        >
+                            <View style={styles.selectorsRow}>
                             {/* Sélecteur de Sourate */}
                             <View style={styles.selectorColumn}>
                                 <Text style={styles.selectorLabel}>{t('reading.surah')}</Text>
-                                <ScrollView style={styles.selectorScroll} showsVerticalScrollIndicator={true}>
+                                <ScrollView 
+                                    ref={surahSelectorScrollRef}
+                                    style={styles.selectorScroll} 
+                                    showsVerticalScrollIndicator={true}
+                                >
                                     {sourates.map((sourate) => (
                                         <TouchableOpacity
                                             key={sourate.numero}
@@ -1031,7 +1102,11 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                             {/* Sélecteur de Verset */}
                             <View style={styles.selectorColumn}>
                                 <Text style={styles.selectorLabel}>{t('reading.verse')}</Text>
-                                <ScrollView style={styles.selectorScroll} showsVerticalScrollIndicator={true}>
+                                <ScrollView 
+                                    ref={verseSelectorScrollRef}
+                                    style={styles.selectorScroll} 
+                                    showsVerticalScrollIndicator={true}
+                                >
                                     {tempSourate && Array.from({ length: tempSourate.nombreVersets }, (_, i) => i + 1).map((verseNum) => (
                                         <TouchableOpacity
                                             key={verseNum}
@@ -1052,6 +1127,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                                 </ScrollView>
                             </View>
                         </View>
+                        </ScrollView>
 
                         <TouchableOpacity 
                             style={styles.modalConfirmButton}
@@ -1529,7 +1605,13 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         padding: 24,
-        maxHeight: '80%',
+        maxHeight: '85%',
+    },
+    modalScrollView: {
+        maxHeight: 450,
+    },
+    modalScrollContent: {
+        flexGrow: 1,
     },
     modalHeader: {
         flexDirection: 'row',
