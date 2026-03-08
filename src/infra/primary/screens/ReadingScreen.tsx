@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, FlatList, Modal } from 'react-native';
 import { ArrowLeft, BookmarkPlus, Bookmark, Volume2, ChevronLeft, ChevronRight, Check, ChevronDown } from 'lucide-react-native';
 import { useAuth } from '@/shared/contexts/AuthContext';
@@ -84,9 +84,14 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const { sourates, loading: loadingSourates } = useSourates();
     
     // Charger les VERSETS SÉPARÉMENT pour chaque mode - 3 appels indépendants
-    const { versets: verseVersets, loading: loadingVerseVersets, error: verseError } = useVersets(versePosition.sourate);
-    const { versets: pageVersets, loading: loadingPageVersets, error: pageError } = useVersets(pagePosition.sourate);
-    const { versets: mushafVersets, loading: loadingMushafVersets, error: mushafError } = useVersets(mushafPosition.sourate);
+    // IMPORTANT: Utiliser 0 tant que la progression n'est pas chargée pour éviter de charger la mauvaise sourate
+    const verseSourateToLoad = progressionsLoaded.verse ? versePosition.sourate : 0;
+    const pageSourateToLoad = progressionsLoaded.page ? pagePosition.sourate : 0;
+    const mushafSourateToLoad = progressionsLoaded.mushaf ? mushafPosition.sourate : 0;
+    
+    const { versets: verseVersets, loading:loadingVerseVersets, error: verseError } = useVersets(verseSourateToLoad);
+    const { versets: pageVersets, loading: loadingPageVersets, error: pageError } = useVersets(pageSourateToLoad);
+    const { versets: mushafVersets, loading: loadingMushafVersets, error: mushafError } = useVersets(mushafSourateToLoad);
     
     // Variables utilisées selon le mode actif
     const versets = mode === 'verse' ? verseVersets : mode === 'page' ? pageVersets : mushafVersets;
@@ -131,16 +136,26 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const currentProgress = mode === 'verse' ? verseProgress : mode === 'page' ? pageProgress : mushafProgress;
     const currentLoading = mode === 'verse' ? loadingVerse : mode === 'page' ? loadingPage : loadingMushaf;
     
-    // Fonction stable pour sauvegarder selon le mode actuel
+    // Fonction stable pour sauvegarder selon le mode actuel (ET synchroniser UserProgressContext)
     const currentSaveProgress = useCallback(async (sourate: number, verset: number) => {
+        // Sauvegarder dans ProgressStorage (par mode)
+        let result;
         if (mode === 'verse') {
-            return saveVerseProgress(sourate, verset);
+            result = await saveVerseProgress(sourate, verset);
         } else if (mode === 'page') {
-            return savePageProgress(sourate, verset);
+            result = await savePageProgress(sourate, verset);
         } else {
-            return saveMushafProgress(sourate, verset);
+            result = await saveMushafProgress(sourate, verset);
         }
-    }, [mode, saveVerseProgress, savePageProgress, saveMushafProgress]);
+        
+        // Synchroniser UserProgressContext (ne pas écraser versesRead)
+        updateProgress({
+            currentSurah: sourate,
+            currentVerse: verset,
+        });
+        
+        return result;
+    }, [mode, saveVerseProgress, savePageProgress, saveMushafProgress, updateProgress]);
 
     // Charger la position sauvegardée pour le mode verse au démarrage (UNE SEULE FOIS)
     useEffect(() => {
@@ -159,10 +174,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     useEffect(() => {
         if (!loadingPage && !progressionsLoaded.page) {
             if (pageProgress) {
-                console.log('[PAGE MODE] 📖 Restauration progression:', pageProgress.sourateNumero, ':', pageProgress.versetNumero);
                 setPagePosition({ sourate: pageProgress.sourateNumero, verset: pageProgress.versetNumero });
-            } else {
-                console.log('[PAGE MODE] ⚠️ Pas de progression sauvegardée');
             }
             setProgressionsLoaded(prev => ({ ...prev, page: true }));
         }
@@ -171,10 +183,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     useEffect(() => {
         if (!loadingMushaf && !progressionsLoaded.mushaf) {
             if (mushafProgress) {
-                console.log('[MUSHAF MODE] 📖 Restauration progression:', mushafProgress.sourateNumero, ':', mushafProgress.versetNumero);
                 setMushafPosition({ sourate: mushafProgress.sourateNumero, verset: mushafProgress.versetNumero });
-            } else {
-                console.log('[MUSHAF MODE] ⚠️ Pas de progression sauvegardée');
             }
             setProgressionsLoaded(prev => ({ ...prev, mushaf: true }));
         }
@@ -198,15 +207,12 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         
         if (currentLastSavedRef.current.sourate === selectedSurah && 
             currentLastSavedRef.current.verset === currentVerse) {
-            console.log(`[${mode.toUpperCase()}] ⏭️ Déjà sauvegardé - ignoré:`, selectedSurah, ':', currentVerse);
             return;
         }
 
-        console.log(`[${mode.toUpperCase()}] 💾 Sauvegarde position:`, selectedSurah, ':', currentVerse);
         currentSaveProgress(selectedSurah, currentVerse)
             .then(() => {
                 currentLastSavedRef.current = { sourate: selectedSurah, verset: currentVerse };
-                console.log(`[${mode.toUpperCase()}] ✅ Position sauvegardée!`);
             });
     }, [mode, selectedSurah, currentVerse, currentSaveProgress]);
 
@@ -257,6 +263,16 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         if (!audioUrl) return;
         
         try {
+            // Si on clique sur le même verset en cours de lecture, arrêter le son
+            if (playingVersetId === versetId && sound) {
+                await sound.stopAsync();
+                await sound.unloadAsync();
+                setSound(undefined);
+                setPlayingVersetId(null);
+                return;
+            }
+            
+            // Sinon, arrêter le son précédent et jouer le nouveau
             if (sound) {
                 await sound.unloadAsync();
                 setSound(undefined);
@@ -286,9 +302,8 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         if (currentVerse < totalVerses) {
             const nextVerse = currentVerse + 1;
             updateVerset(nextVerse);
+            // Mettre à jour uniquement les stats (currentSurah/currentVerse sont synchronisés par currentSaveProgress)
             updateProgress({
-                currentSurah: selectedSurah,
-                currentVerse: nextVerse,
                 versesRead: Math.max(localProgress.versesRead, nextVerse),
             });
             currentSaveProgress(selectedSurah, nextVerse);
@@ -299,11 +314,7 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         if (currentVerse > 1) {
             const prevVerse = currentVerse - 1;
             updateVerset(prevVerse);
-            updateProgress({
-                currentSurah: selectedSurah,
-                currentVerse: prevVerse,
-                versesRead: localProgress.versesRead,
-            });
+            // currentSaveProgress synchronise déjà currentSurah/currentVerse
             currentSaveProgress(selectedSurah, prevVerse);
         }
     };
@@ -313,12 +324,11 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             // Passer au verset suivant dans la même sourate
             const nextVerse = currentVerse + 1;
             updateVerset(nextVerse);
+            // Mettre à jour uniquement les stats
             updateProgress({
-                currentSurah: selectedSurah,
-                currentVerse: nextVerse,
                 versesRead: Math.max(localProgress.versesRead, currentVerse),
             });
-            // Sauvegarder immédiatement
+            // Sauvegarder immédiatement (synchronise currentSurah/currentVerse automatiquement)
             currentSaveProgress(selectedSurah, nextVerse);
         } else if (selectedSurah < 114) {
             // Dernier verset de la sourate, passer à la sourate suivante
@@ -352,12 +362,11 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     const moveToNextSourate = () => {
         const nextSurah = selectedSurah + 1;
         updatePosition(nextSurah, 1);
+        // Mettre à jour uniquement les stats
         updateProgress({
-            currentSurah: nextSurah,
-            currentVerse: 1,
             versesRead: localProgress.versesRead + 1,
         });
-        // Sauvegarder immédiatement
+        // Sauvegarder immédiatement (synchronise currentSurah/currentVerse automatiquement)
         currentSaveProgress(nextSurah, 1);
     };
 
@@ -378,10 +387,8 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
 
     const handleSurahChange = (numero: number) => {
         updatePosition(numero, 1);
-        // Sauvegarder immédiatement sur le serveur
-        if (user) {
-            currentSaveProgress(numero, 1);
-        }
+        // Sauvegarder immédiatement (gère automatiquement anonyme et connecté)
+        currentSaveProgress(numero, 1);
     };
 
     const handleOpenSelector = () => {
@@ -391,18 +398,33 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     };
 
     const handleConfirmSelection = () => {
+        // Mettre à jour la position
         updatePosition(tempSelectedSurah, tempSelectedVerse);
         setShowSelectorModal(false);
-        updateProgress({
-            currentSurah: tempSelectedSurah,
-            currentVerse: tempSelectedVerse,
-            versesRead: localProgress.versesRead,
-        });
         
-        // Sauvegarder immédiatement sur le serveur
-        if (user) {
-            currentSaveProgress(tempSelectedSurah, tempSelectedVerse);
+        // Réinitialiser le flag de scroll pour permettre le scroll vers la nouvelle position
+        if (mode !== 'verse') {
+            const modeKey = mode as keyof typeof hasInitiallyScrolledRef.current;
+            hasInitiallyScrolledRef.current[modeKey] = false;
+            
+            // Forcer le scroll vers le verset sélectionné après un court délai
+            setTimeout(() => {
+                const currentScrollView = mode === 'page' ? pageScrollViewRef : mushafScrollViewRef;
+                const currentVersetPositions = mode === 'page' ? pageVersetPositionsRef : mushafVersetPositionsRef;
+                
+                if (currentScrollView.current && currentVersetPositions.current.size > 0) {
+                    const targetY = currentVersetPositions.current.get(tempSelectedVerse);
+                    if (targetY !== undefined) {
+                        currentScrollView.current.scrollTo({ y: targetY, animated: true });
+                    }
+                }
+            }, 300);
         }
+        
+        // Sauvegarder avec un petit délai pour s'assurer que la position est bien mise à jour
+        setTimeout(() => {
+            currentSaveProgress(tempSelectedSurah, tempSelectedVerse);
+        }, 100);
     };
 
     // Navigation entre sourates (pour modes page et mushaf)
@@ -429,14 +451,8 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
         // Utiliser la Map spécifique au mode passé en paramètre (pas le mode actuel!)
         if (targetMode === 'page') {
             pageVersetPositionsRef.current.set(versetNumero, layout.y);
-            if (versetNumero % 20 === 0) { // Log tous les 20 versets pour ne pas spammer
-                console.log(`[PAGE] 📍 Map size:`, pageVersetPositionsRef.current.size);
-            }
         } else if (targetMode === 'mushaf') {
             mushafVersetPositionsRef.current.set(versetNumero, layout.y);
-            if (versetNumero % 20 === 0) {
-                console.log(`[MUSHAF] 📍 Map size:`, mushafVersetPositionsRef.current.size);
-            }
         }
     }, []);
 
@@ -491,8 +507,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
     useEffect(() => {
         if (mode === 'verse') return; // Mode verse n'utilise pas de scroll continu
         
-        console.log(`[${mode.toUpperCase()}] 🔄 Effet de scroll - currentVerse:`, currentVerse, 'hasScrolled:', hasInitiallyScrolledRef.current[mode as keyof typeof hasInitiallyScrolledRef.current]);
-        
         // Si on a déjà scrollé pour ce mode, ne rien faire
         const modeKey = mode as keyof typeof hasInitiallyScrolledRef.current;
         if (hasInitiallyScrolledRef.current[modeKey]) return;
@@ -503,7 +517,6 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
             const currentVersetPositions = mode === 'page' ? pageVersetPositionsRef : mushafVersetPositionsRef;
             
             if (currentScrollView.current && currentVerse > 1 && currentVersetPositions.current.size > 0) {
-                console.log(`[${mode.toUpperCase()}] 📍 Scroll vers verset:`, currentVerse, 'positions map size:', currentVersetPositions.current.size);
                 // Bloquer handleScroll pendant le scroll automatique
                 isAutoScrollingRef.current = true;
                 
@@ -512,12 +525,10 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                 
                 if (targetY !== undefined) {
                     // Utiliser la position réelle du verset
-                    console.log(`[${mode.toUpperCase()}] ✅ Position trouvée:`, targetY);
                     currentScrollView.current.scrollTo({ y: targetY, animated: false });
                 } else {
                     // Fallback: estimation si la position n'est pas encore calculée
                     const estimatedY = (currentVerse - 1) * 200;
-                    console.log(`[${mode.toUpperCase()}] ⚠️ Position estimée (pas dans map):`, estimatedY);
                     currentScrollView.current.scrollTo({ y: estimatedY, animated: false });
                 }
                 
@@ -840,6 +851,20 @@ export const ReadingScreen = ({ navigation }: ReadingScreenProps) => {
                         <View style={styles.mushafVerse}>
                             <Text style={styles.mushafNumber}>{verset.versetNumero}</Text>
                             <Text style={styles.mushafText}>{verset.texteArabe}</Text>
+                            {verset.audioUrl && (
+                                <TouchableOpacity
+                                    style={[
+                                        styles.mushafAudioButton,
+                                        playingVersetId === verset.id && styles.mushafAudioButtonPlaying,
+                                    ]}
+                                    onPress={() => handlePlayAudio(verset.id, verset.audioUrl)}
+                                >
+                                    <Volume2 
+                                        color={playingVersetId === verset.id ? "#ffffff" : "#059669"} 
+                                        size={16} 
+                                    />
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
                 ))}
@@ -1633,6 +1658,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 2,
         elevation: 1,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
     },
     mushafText: {
         fontSize: 26,
@@ -1640,6 +1667,7 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         color: '#1f2937',
         writingDirection: 'rtl',
+        flex: 1,
     },
     mushafNumber: {
         position: 'absolute',
@@ -1656,6 +1684,19 @@ const styles = StyleSheet.create({
         color: '#059669',
         textAlign: 'center',
         lineHeight: 28,
+    },
+    mushafAudioButton: {
+        width: 32,
+        height: 32,
+        backgroundColor: '#d1fae5',
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 8,
+        marginTop: 8,
+    },
+    mushafAudioButtonPlaying: {
+        backgroundColor: '#059669',
     },
     jumpingOverlay: {
         position: 'absolute',

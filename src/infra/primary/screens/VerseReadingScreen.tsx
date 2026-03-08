@@ -19,10 +19,11 @@ export const VerseReadingScreen = ({ navigation }: VerseReadingScreenProps) => {
     const { t } = useTranslation();
     const { user } = useAuth();
     const { progress: localProgress, updateProgress } = useUserProgress();
-    const { progress: verseProgress, loading: loadingVerse, saveProgress } = useProgress(user?.id || null, 'verse');
+    const effectiveUserId = user?.id || 'anonymous';
+    const { progress: verseProgress, loading: loadingVerse, saveProgress: saveProgressToStorage } = useProgress(effectiveUserId, 'verse');
     
     const isSignedIn = !!user;
-    const [selectedSurah, setSelectedSurah] = useState(1);
+    const [selectedSurah, setSelectedSurah] = useState(0); // Commencer à 0 pour attendre la progression
     const [currentVerse, setCurrentVerse] = useState(1);
     const [showTranslation, setShowTranslation] = useState(true);
     const [sound, setSound] = useState<Audio.Sound>();
@@ -36,24 +37,39 @@ export const VerseReadingScreen = ({ navigation }: VerseReadingScreenProps) => {
     const currentSourate = sourates.find(s => s.numero === selectedSurah);
     const totalVerses = versets.length;
 
+    // Wrapper pour synchroniser ProgressStorage et UserProgressContext
+    const saveProgress = useCallback(async (surah: number, verse: number) => {
+        // Sauvegarder dans ProgressStorage
+        await saveProgressToStorage(surah, verse);
+        // Synchroniser UserProgressContext
+        updateProgress({
+            currentSurah: surah,
+            currentVerse: verse,
+        });
+    }, [saveProgressToStorage, updateProgress]);
+
     // Charger la position sauvegardée
     useEffect(() => {
-        if (!loadingVerse && verseProgress) {
-            setSelectedSurah(verseProgress.sourateNumero);
-            setCurrentVerse(verseProgress.versetNumero);
+        if (!loadingVerse) {
+            if (verseProgress) {
+                setSelectedSurah(verseProgress.sourateNumero);
+                setCurrentVerse(verseProgress.versetNumero);
+            } else {
+                // Pas de progression sauvegardée, commencer à Fatiha
+                setSelectedSurah(1);
+                setCurrentVerse(1);
+            }
         }
     }, [loadingVerse, verseProgress]);
 
-    // Sauvegarder automatiquement
+    // Sauvegarder automatiquement (backup)
     useEffect(() => {
-        if (!user) return;
-        
         const timer = setTimeout(() => {
             saveProgress(selectedSurah, currentVerse);
         }, 2000);
         
         return () => clearTimeout(timer);
-    }, [selectedSurah, currentVerse, user, saveProgress]);
+    }, [selectedSurah, currentVerse, saveProgress]);
 
     useEffect(() => {
         return sound ? () => { sound.unloadAsync(); } : undefined;
@@ -63,6 +79,16 @@ export const VerseReadingScreen = ({ navigation }: VerseReadingScreenProps) => {
         if (!audioUrl) return;
         
         try {
+            // Si on clique sur le même verset en cours de lecture, arrêter le son
+            if (playingVersetId === versetId && sound) {
+                await sound.stopAsync();
+                await sound.unloadAsync();
+                setSound(undefined);
+                setPlayingVersetId(null);
+                return;
+            }
+            
+            // Sinon, arrêter le son précédent et jouer le nouveau
             if (sound) {
                 await sound.unloadAsync();
                 setSound(undefined);
@@ -92,14 +118,12 @@ export const VerseReadingScreen = ({ navigation }: VerseReadingScreenProps) => {
             const nextVerse = currentVerse + 1;
             setCurrentVerse(nextVerse);
             
-            if (user) {
-                await saveProgress(selectedSurah, nextVerse);
-                updateProgress({
-                    currentSurah: selectedSurah,
-                    currentVerse: nextVerse,
-                    versesRead: localProgress.versesRead + 1,
-                });
-            }
+            // Sauvegarder et synchroniser automatiquement
+            await saveProgress(selectedSurah, nextVerse);
+            // Mettre à jour uniquement les stats
+            updateProgress({
+                versesRead: localProgress.versesRead + 1,
+            });
         } else {
             // Fin de la sourate - afficher modal
             if (currentSourate && user) {
@@ -113,19 +137,16 @@ export const VerseReadingScreen = ({ navigation }: VerseReadingScreenProps) => {
         if (currentVerse > 1) {
             const prevVerse = currentVerse - 1;
             setCurrentVerse(prevVerse);
-            
-            if (user) {
-                saveProgress(selectedSurah, prevVerse);
-            }
+            // Sauvegarder et synchroniser automatiquement
+            saveProgress(selectedSurah, prevVerse);
         }
     };
 
     const handleSourateChange = (newSurah: number) => {
         setSelectedSurah(newSurah);
         setCurrentVerse(1);
-        if (user) {
-            saveProgress(newSurah, 1);
-        }
+        // Sauvegarder et synchroniser automatiquement
+        saveProgress(newSurah, 1);
     };
 
     const handleCloseCompletionModal = () => {

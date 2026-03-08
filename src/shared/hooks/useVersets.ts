@@ -20,8 +20,12 @@ export function useVersets(sourateNumero: number) {
   }, [sourateNumero]);
 
   useEffect(() => {
-    if (sourateNumero) {
+    // Ne rien charger si sourateNumero est 0 (attente de chargement de la progression)
+    if (sourateNumero > 0) {
       fetchVersets();
+    } else {
+      setVersets([]);
+      setLoading(false);
     }
   }, [sourateNumero, fetchVersets]);
 

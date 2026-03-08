@@ -31,6 +31,15 @@ export function VersetsList({ route }: VersetsListProps) {
 
   async function playAudio(versetId: string, audioUrl: string) {
     try {
+      // Si on clique sur le même verset en cours de lecture, arrêter le son
+      if (playingId === versetId && sound) {
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        setSound(undefined);
+        setPlayingId(null);
+        return;
+      }
+
       // Stop current sound if playing
       if (sound) {
         await sound.unloadAsync();
