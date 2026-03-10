@@ -78,6 +78,7 @@ export const QuizResultModal = ({
                         <Text style={styles.optionsTitle}>{t('common.what_next')}</Text>
 
                         <TouchableOpacity
+                            testID="continue-quizzes-button"
                             style={styles.optionButton}
                             onPress={onContinueQuizzes}
                         >
@@ -88,6 +89,7 @@ export const QuizResultModal = ({
                         </TouchableOpacity>
 
                         <TouchableOpacity
+                            testID="redo-sourate-button"
                             style={styles.optionButton}
                             onPress={onRedoSourate}
                         >
@@ -99,6 +101,7 @@ export const QuizResultModal = ({
 
                         {sourateNumber < 114 && (
                             <TouchableOpacity
+                                testID="next-sourate-button"
                                 style={styles.optionButton}
                                 onPress={onNextSourate}
                             >

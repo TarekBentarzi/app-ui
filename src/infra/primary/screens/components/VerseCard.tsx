@@ -1,7 +1,8 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Volume2 } from 'lucide-react-native';
 import type { Verset } from '@/infra/secondary/quran';
+import { useFontSize } from '@/shared/contexts/FontSizeContext';
 
 interface VerseCardProps {
     verset: Verset;
@@ -12,7 +13,7 @@ interface VerseCardProps {
     sourateName?: string;
 }
 
-export const VerseCard = memo(({ 
+export const VerseCard = ({ 
     verset, 
     showTranslation, 
     playingVersetId, 
@@ -20,6 +21,8 @@ export const VerseCard = memo(({
     isFirstOfSourate,
     sourateName 
 }: VerseCardProps) => {
+    const { arabicFontSize, translationFontSize } = useFontSize();
+    
     return (
         <>
             {/* Séparateur de sourate */}
@@ -52,24 +55,14 @@ export const VerseCard = memo(({
                         </TouchableOpacity>
                     )}
                 </View>
-                <Text style={styles.pageArabicText}>{verset.texteArabe}</Text>
+                <Text style={[styles.pageArabicText, { fontSize: arabicFontSize }]}>{verset.texteArabe}</Text>
                 {showTranslation && verset.traduction && (
-                    <Text style={styles.pageTranslationText}>{verset.traduction}</Text>
+                    <Text style={[styles.pageTranslationText, { fontSize: translationFontSize }]}>{verset.traduction}</Text>
                 )}
             </View>
         </>
     );
-}, (prevProps, nextProps) => {
-    // Optimisation: ne re-render que si ces props changent
-    return (
-        prevProps.verset.id === nextProps.verset.id &&
-        prevProps.showTranslation === nextProps.showTranslation &&
-        prevProps.playingVersetId === nextProps.playingVersetId &&
-        prevProps.isFirstOfSourate === nextProps.isFirstOfSourate
-    );
-});
-
-VerseCard.displayName = 'VerseCard';
+};
 
 const styles = StyleSheet.create({
     pageVerseCard: {

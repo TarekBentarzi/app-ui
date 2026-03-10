@@ -66,6 +66,35 @@ jest.mock('expo-linear-gradient', () => ({
   LinearGradient: 'LinearGradient',
 }));
 
+// Mock expo-av
+jest.mock('expo-av', () => ({
+  Audio: {
+    Sound: {
+      createAsync: jest.fn(() => Promise.resolve({
+        sound: {
+          playAsync: jest.fn(),
+          pauseAsync: jest.fn(),
+          stopAsync: jest.fn(),
+          unloadAsync: jest.fn(),
+          setIsLoopingAsync: jest.fn(),
+          setPositionAsync: jest.fn(),
+          getStatusAsync: jest.fn(() => Promise.resolve({
+            isLoaded: true,
+            isPlaying: false,
+            durationMillis: 0,
+            positionMillis: 0,
+          })),
+        },
+        status: {
+          isLoaded: true,
+        },
+      })),
+    },
+    setAudioModeAsync: jest.fn(),
+  },
+  Video: 'Video',
+}));
+
 // Mock i18n
 jest.mock('./src/shared/i18n', () => ({
   i18n: {

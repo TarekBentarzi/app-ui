@@ -35,7 +35,7 @@ jest.mock('@react-navigation/native-stack', () => ({
     }),
 }));
 
-jest.mock('../screens/WelcomeScreen', () => ({
+jest.mock('../screens/WelcomScreen/WelcomeScreen', () => ({
     WelcomeScreen: ({ onContinue }: any) => {
         capturedOnContinue = onContinue;
         const { View, TouchableOpacity, Text } = require('react-native');

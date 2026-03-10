@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { getTotalPagesRead, TOTAL_PAGES } from '@/shared/constants/quranPages';
 
 interface QuranProgressBarProps {
     currentSurah: number;
@@ -21,16 +22,18 @@ const getModeLabel = (mode: string) => {
 };
 
 export const QuranProgressBar = ({ currentSurah, totalSurahs, mode }: QuranProgressBarProps) => {
-    const progress = totalSurahs > 0 ? (currentSurah / totalSurahs) * 100 : 0;
+    // Calculer la progression basée sur les pages du Coran (604 pages)
+    const pagesRead = getTotalPagesRead(currentSurah - 1); // Pages jusqu'à la sourate précédente
+    const progress = TOTAL_PAGES > 0 ? (pagesRead / TOTAL_PAGES) * 100 : 0;
     
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
                 <Text style={styles.modeLabel}>
-                    📖 Progression du Coran - {getModeLabel(mode)}
+                    📖 Progression du Coran
                 </Text>
                 <Text style={styles.progressText}>
-                    {currentSurah}/{totalSurahs} sourates ({Math.round(progress)}%)
+                    {Math.round(progress)}%
                 </Text>
             </View>
             <View style={styles.progressBarBg}>

@@ -42,59 +42,75 @@ describe('AuthContext', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        (AuthStorage.getUser as jest.Mock).mockReturnValue(null);
-        (AuthStorage.getToken as jest.Mock).mockReturnValue(null);
+        (AuthStorage.getUserAsync as jest.Mock).mockResolvedValue(null);
+        (AuthStorage.getTokenAsync as jest.Mock).mockResolvedValue(null);
         (AuthStorage.saveUser as jest.Mock).mockReturnValue(undefined);
         (AuthStorage.saveToken as jest.Mock).mockReturnValue(undefined);
-        (AuthStorage.clearUser as jest.Mock).mockReturnValue(undefined);
+        (AuthStorage.clearUser as jest.Mock).mockResolvedValue(undefined);
         (AuthStorage.clearToken as jest.Mock).mockReturnValue(undefined);
         
         __mockLogin.mockResolvedValue({ user: mockUser, token: 'token123' });
         __mockLogout.mockResolvedValue(undefined);
     });
 
-    it('should provide initial null user', () => {
+    it('should provide initial null user', async () => {
         const { result } = renderHook(() => useAuth(), {
             wrapper: AuthProvider,
+        });
+
+        await waitFor(() => {
+            expect(result.current.isInitializing).toBe(false);
         });
 
         expect(result.current.user).toBeNull();
         expect(result.current.loading).toBe(false);
     });
 
-    it('should restore user from storage on mount', () => {
-        (AuthStorage.getUser as jest.Mock).mockReturnValue(mockUser);
-        (AuthStorage.getToken as jest.Mock).mockReturnValue('token123');
+    it('should restore user from storage on mount', async () => {
+        (AuthStorage.getUserAsync as jest.Mock).mockResolvedValue(mockUser);
+        (AuthStorage.getTokenAsync as jest.Mock).mockResolvedValue('token123');
         (apiClient.setToken as jest.Mock).mockReturnValue(undefined);
 
         const { result } = renderHook(() => useAuth(), {
             wrapper: AuthProvider,
         });
 
+        await waitFor(() => {
+            expect(result.current.isInitializing).toBe(false);
+        });
+
         expect(result.current.user).toEqual(mockUser);
         expect(apiClient.setToken).toHaveBeenCalledWith('token123');
     });
 
-    it('should clear storage when only user is saved without token', () => {
-        (AuthStorage.getUser as jest.Mock).mockReturnValue(mockUser);
-        (AuthStorage.getToken as jest.Mock).mockReturnValue(null);
-        (AuthStorage.clearUser as jest.Mock).mockReturnValue(undefined);
+    it('should clear storage when only user is saved without token', async () => {
+        (AuthStorage.getUserAsync as jest.Mock).mockResolvedValue(mockUser);
+        (AuthStorage.getTokenAsync as jest.Mock).mockResolvedValue(null);
+        (AuthStorage.clearUser as jest.Mock).mockResolvedValue(undefined);
 
         const { result } = renderHook(() => useAuth(), {
             wrapper: AuthProvider,
+        });
+
+        await waitFor(() => {
+            expect(result.current.isInitializing).toBe(false);
         });
 
         expect(AuthStorage.clearUser).toHaveBeenCalled();
         expect(result.current.user).toBeNull();
     });
 
-    it('should clear storage when only token is saved without user', () => {
-        (AuthStorage.getUser as jest.Mock).mockReturnValue(null);
-        (AuthStorage.getToken as jest.Mock).mockReturnValue('token123');
-        (AuthStorage.clearUser as jest.Mock).mockReturnValue(undefined);
+    it('should clear storage when only token is saved without user', async () => {
+        (AuthStorage.getUserAsync as jest.Mock).mockResolvedValue(null);
+        (AuthStorage.getTokenAsync as jest.Mock).mockResolvedValue('token123');
+        (AuthStorage.clearUser as jest.Mock).mockResolvedValue(undefined);
 
         const { result } = renderHook(() => useAuth(), {
             wrapper: AuthProvider,
+        });
+
+        await waitFor(() => {
+            expect(result.current.isInitializing).toBe(false);
         });
 
         expect(AuthStorage.clearUser).toHaveBeenCalled();

@@ -79,7 +79,7 @@ export function QuranDashboard({ navigation }: QuranDashboardProps) {
               Sourate {progress.sourateNumero}, Verset {progress.versetNumero}
             </Text>
             <Text style={styles.dateText}>
-              Dernière mise à jour: {new Date(progress.dateUpdate).toLocaleDateString()}
+              Dernière mise à jour: {new Date(progress.lastReadAt).toLocaleDateString()}
             </Text>
           </View>
         ) : (
@@ -164,10 +164,10 @@ export function QuranDashboard({ navigation }: QuranDashboardProps) {
               .toString()}
           />
           <StatRow
-            label="Série actuelle"
-            value={memorizations
-              .reduce((max, m) => Math.max(max, m.streak), 0)
-              .toString()}
+            label="Maîtrise moyenne"
+            value={memorizations.length > 0 
+              ? Math.round(memorizations.reduce((sum, m) => sum + m.niveauMaitrise, 0) / memorizations.length).toString() + '%'
+              : '0%'}
           />
         </View>
       </View>

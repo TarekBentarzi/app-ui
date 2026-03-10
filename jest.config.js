@@ -50,6 +50,6 @@ module.exports = {
     '^.+\\.(js|jsx|mjs)$': 'babel-jest', // ⚡ Transpile aussi les fichiers JS/MJS
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(expo-constants|expo-modules-core|lucide-react-native)/)', // ⚡ Transpile ces modules ES
+    'node_modules/(?!(expo-constants|expo-modules-core|lucide-react-native|expo-av)/)', // ⚡ Transpile ces modules ES
   ],
 };

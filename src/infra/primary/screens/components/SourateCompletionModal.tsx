@@ -151,6 +151,7 @@ export const SourateCompletionModal = ({
                     {/* Buttons */}
                     <View style={styles.buttonsContainer}>
                         <TouchableOpacity
+                            testID="start-quiz-button"
                             style={styles.primaryButton}
                             onPress={onStartQuiz}
                         >
@@ -161,6 +162,7 @@ export const SourateCompletionModal = ({
                         </TouchableOpacity>
 
                         <TouchableOpacity
+                            testID="skip-button"
                             style={styles.secondaryButton}
                             onPress={onSkip}
                         >

@@ -4,11 +4,17 @@ import { UserProgressProvider, useUserProgress } from './UserProgressContext';
 import { useAuth } from './AuthContext';
 
 jest.mock('./AuthContext');
-jest.mock('@/infra/secondary/storage/AuthStorage', () => ({
-    AuthStorage: {
-        getItem: jest.fn(() => JSON.stringify({ currentVerse: 1, versesRead: 0, streak: 0 })),
-        setItem: jest.fn(),
-        removeItem: jest.fn(),
+jest.mock('@/infra/secondary/storage/ProgressStorage', () => ({
+    ProgressStorage: {
+        getProgress: jest.fn(() => Promise.resolve(null)),
+        saveProgress: jest.fn(() => Promise.resolve()),
+    },
+}));
+jest.mock('@/infra/secondary/storage/UniversalStorage', () => ({
+    UniversalStorage: {
+        getItem: jest.fn(() => Promise.resolve(null)),
+        setItem: jest.fn(() => Promise.resolve()),
+        removeItem: jest.fn(() => Promise.resolve()),
     },
 }));
 
@@ -22,17 +28,24 @@ describe('UserProgressContext', () => {
         });
     });
 
-    it('should provide initial progress', () => {
+    it('should provide initial progress', async () => {
         const { result } = renderHook(() => useUserProgress(), {
             wrapper: UserProgressProvider,
         });
 
-        expect(result.current.progress).toBeDefined();
+        await waitFor(() => {
+            expect(result.current.progress).toBeDefined();
+        });
     });
 
     it('should update progress', async () => {
         const { result } = renderHook(() => useUserProgress(), {
             wrapper: UserProgressProvider,
+        });
+
+        // Wait for initial load to complete
+        await waitFor(() => {
+            expect(result.current.progress.currentVerse).toBe(1);
         });
 
         await act(async () => {
@@ -45,6 +58,11 @@ describe('UserProgressContext', () => {
     it('should reset progress', async () => {
         const { result } = renderHook(() => useUserProgress(), {
             wrapper: UserProgressProvider,
+        });
+
+        // Wait for initial load to complete
+        await waitFor(() => {
+            expect(result.current.progress).toBeDefined();
         });
 
         await act(async () => {
@@ -61,15 +79,18 @@ describe('UserProgressContext', () => {
         }).toThrow('useUserProgress must be used within a UserProgressProvider');
     });
 
-    it('should handle corrupted progress data', () => {
-        const AuthStorage = require('@/infra/secondary/storage/AuthStorage').AuthStorage;
-        AuthStorage.getItem.mockReturnValueOnce('invalid-json');
+    it('should handle corrupted progress data', async () => {
+        const UniversalStorage = require('@/infra/secondary/storage/UniversalStorage').UniversalStorage;
+        UniversalStorage.getItem.mockResolvedValueOnce('invalid-json');
         
         const { result } = renderHook(() => useUserProgress(), {
             wrapper: UserProgressProvider,
         });
 
-        // Should still work with default progress
-        expect(result.current.progress).toBeDefined();
+        // Wait for load to complete
+        await waitFor(() => {
+            // Should still work with default progress
+            expect(result.current.progress).toBeDefined();
+        });
     });
 });

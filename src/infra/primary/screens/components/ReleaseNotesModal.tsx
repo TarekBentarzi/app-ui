@@ -100,6 +100,7 @@ export const ReleaseNotesModal = ({
                             </View>
                         </View>
                         <TouchableOpacity
+                            testID="close-button"
                             style={styles.closeButton}
                             onPress={onClose}
                         >

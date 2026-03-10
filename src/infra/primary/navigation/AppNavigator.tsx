@@ -1,20 +1,35 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { WelcomeScreen } from '../screens/WelcomeScreen';
-import { MainMenuScreen } from '../screens/MainMenuScreen';
-import { ReadingScreen } from '../screens/ReadingScreen';
-import { MemorizingTabsScreen } from '../screens/MemorizingTabsScreen';
-import { PronunciationScreen } from '../screens/PronunciationScreen';
-import { SignInScreen } from '../screens/SignInScreen';
-import { ProfileScreen } from '../screens/ProfileScreen';
+import { WelcomeScreen } from '../screens/WelcomScreen/WelcomeScreen';
+import { MainMenuScreen } from '../screens/MainMenuScreen/MainMenuScreen';
+import { ReadingScreen } from '../screens/ReadingScreen/ReadingScreen';
+import { MemorizingTabsScreen } from '../screens/MemorizingScreen/MemorizingTabsScreen';
+import { PronunciationScreen } from '../screens/PronunciationScreen/PronunciationScreen';
+import { SignInScreen } from '../screens/SignInScreen/SignInScreen';
+import { ProfileScreen } from '../screens/ProfileScreen/ProfileScreen';
 import { SouratesList } from '../quran/SouratesList';
 import { VersetsList } from '../quran/VersetsList';
 import { QuranDashboard } from '../quran/QuranDashboard';
-import { QuizListScreen } from '../screens/QuizListScreen';
-import { QuizScreen } from '../screens/QuizScreen';
+import { QuizListScreen } from '../screens/QuizScreen/QuizListScreen';
+import { QuizScreen } from '../screens/QuizScreen/QuizScreen';
 
-const Stack = createNativeStackNavigator();
+type RootStackParamList = {
+    Welcome: undefined;
+    MainMenu: undefined;
+    SignIn: undefined;
+    Reading: undefined;
+    Memorizing: undefined;
+    Pronunciation: undefined;
+    Profile: undefined;
+    QuranDashboard: undefined;
+    SouratesList: undefined;
+    VersetsList: undefined;
+    QuizList: undefined;
+    Quiz: { sourateNumero: number; isNew: boolean };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const AppNavigator = () => {
     return (
